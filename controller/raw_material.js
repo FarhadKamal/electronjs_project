@@ -7,8 +7,8 @@ let trackData;
 const createRawMaterialWindow = () => {
   if (!subWindow) {
     subWindow = new BrowserWindow({
-      width: 600,
-      height: 400,
+      width: 800,
+      height: 600,
       autoHideMenuBar: true,
 
       webPreferences: {
@@ -73,7 +73,6 @@ ipcMain.on("raw:material:list:click", function (e, item) {
   subWindow.loadFile("view/raw_material/list.html");
 });
 
-
 ipcMain.on("raw:material:list:loaded", function (e, item) {
   let html = "";
 
@@ -125,12 +124,16 @@ function insert(item, callback) {
     }
   });
 
+  //data cleaning
+
+  let matname = item[0].replace(/['"]+/g, "");
+
   // Perform a query
 
   query =
     "INSERT INTO raw_material_list (raw_mat_name, raw_mat_unit) VALUES \
    ('" +
-    item[0] +
+    matname +
     "', '" +
     item[1] +
     "')";
@@ -166,13 +169,17 @@ function update(item, callback) {
     }
   });
 
+  //data cleaning
+
+  let matname = item[1].replace(/['"]+/g, "");
+
   // Perform a query
 
   query =
     "update  raw_material_list \
     set \
     raw_mat_name = '" +
-    item[1] +
+    matname +
     "' , \
     raw_mat_unit = '" +
     item[2] +
