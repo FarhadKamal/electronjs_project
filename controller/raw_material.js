@@ -50,7 +50,7 @@ ipcMain.on("raw:material:edit:request", function (e, id) {
 });
 
 ipcMain.on("raw:material:edit:loaded", function (e, id) {
-  e.reply("raw:material:edit:loaded:reply", trackData);
+  e.reply("raw:material:edit:fetched", trackData);
 });
 
 ipcMain.on("raw:material:add:submit", function (e, item) {

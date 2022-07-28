@@ -7,3 +7,5 @@ This is a minimal Electron application
 It has Mysql Connection
 
 with simple CRUD example
+
+with simple authentication login

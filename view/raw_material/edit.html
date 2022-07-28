@@ -72,7 +72,7 @@
         false
       );
 
-      ipcRenderer.on("raw:material:edit:loaded:reply", function (e, data) {
+      ipcRenderer.on("raw:material:edit:fetched", function (e, data) {
         document.querySelector("#mtid").value = data[0].raw_mat_id;
         document.querySelector("#mtname").value = data[0].raw_mat_name;
         document.querySelector("#mtunit").value = data[0].raw_mat_unit;
