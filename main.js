@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain, Menu, session } = require("electron");
 const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
-const { createAnotherWindow } = require("./controller/another");
+const { createAnotherWindow } = require("./controller/user");
 const { createLoginWindow } = require("./controller/login");
 
 // development or production
@@ -46,14 +46,17 @@ const mainMenuTemplate = [
         label: "Another",
 
         click() {
-          createAnotherWindow();
+          
+        console.log("Another Windpw")
+
+       
         },
       },
-
     ],
   },
-
 ];
+
+
 
 // Do not touch below!
 // Do not touch below!
@@ -182,8 +185,7 @@ ipcMain.on("login:success", function (e, item) {
     session.defaultSession.cookies
       .get({ url: "http://myapp.com" })
       .then((cookies) => {
-        menuAccess = cookies[0].value;
-
+      
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
         mainWindow.loadFile("dashboard.html");
@@ -192,17 +194,6 @@ ipcMain.on("login:success", function (e, item) {
         console.log(error);
       });
   }
-});
-
-ipcMain.on("dashboard:user:name:request", function (e, item) {
-  session.defaultSession.cookies
-    .get({ url: "http://myapp.com" })
-    .then((cookies) => {
-      e.reply("dashboard:user:name:send", cookies[0].name);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 });
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = true;

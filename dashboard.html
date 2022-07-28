@@ -16,10 +16,10 @@
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("dashboard:user:name:request", "hello");
+          ipcRenderer.send("user:name:request", "hello");
 
-          ipcRenderer.on("dashboard:user:name:send", function (e, name) {
-            document.querySelector("#msg").textContent = "Welcome " + name;
+          ipcRenderer.on("user:name:send", function (e, data) {
+            document.querySelector("#msg").textContent = "Welcome " + data[0].displayname;
           });
         },
         false

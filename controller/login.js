@@ -47,7 +47,7 @@ function checkSession() {
   session.defaultSession.cookies
     .get({ url: "http://myapp.com" })
     .then((cookies) => {
-      console.log(cookies);
+      // console.log(cookies);
     })
     .catch((error) => {
       console.log(error);
