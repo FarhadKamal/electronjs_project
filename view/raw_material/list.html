@@ -49,20 +49,15 @@
       });
 
       function deleteMe(id) {
-        // if (confirm("Are you sure you want to remove it?") == true) {
-        //   ipcRenderer.send("raw:material:delete:request", id);
-        // }
-       ipcRenderer.send("raw:material:delete:request", id);
-
-    
-         
+        ipcRenderer.send("raw:material:delete:request", id);
+      }
+      function editMe(id) {
+        ipcRenderer.send("raw:material:edit:request", id);
       }
       ipcRenderer.on("raw:material:list:deleted", function (e, reply) {
-  
-          document.querySelector("#msg").style.visibility = "visible";
-          document.querySelector("#msg").className = "alert alert-danger";
-          document.querySelector("#msg").textContent = reply;
-  
+        document.querySelector("#msg").style.visibility = "visible";
+        document.querySelector("#msg").className = "alert alert-danger";
+        document.querySelector("#msg").textContent = reply;
       });
     </script>
   </body>

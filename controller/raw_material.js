@@ -2,6 +2,7 @@ const mysql = require("mysql");
 const { ipcMain, BrowserWindow, dialog } = require("electron");
 const { getConnectionString, dblost } = require("../db");
 let subWindow = null;
+let trackData;
 
 const createRawMaterialWindow = () => {
   if (!subWindow) {
@@ -35,17 +36,32 @@ ipcMain.on("raw:material:delete:request", function (e, id) {
   });
   if (response == 0) {
     deleteQuery(id, function (reply) {
- 
-      if(reply=='success')
-      subWindow.loadFile("view/raw_material/list.html");
+      if (reply == "success") subWindow.loadFile("view/raw_material/list.html");
       else e.reply("raw:material:list:deleted", reply);
     });
   }
 });
 
+ipcMain.on("raw:material:edit:request", function (e, id) {
+  get_by_id(id, function (row) {
+    trackData = row;
+    subWindow.loadFile("view/raw_material/edit.html");
+  });
+});
+
+ipcMain.on("raw:material:edit:loaded", function (e, id) {
+  e.reply("raw:material:edit:loaded:reply", trackData);
+});
+
 ipcMain.on("raw:material:add:submit", function (e, item) {
   insert(item, function (reply) {
     e.reply("raw:material:add:reply", reply);
+  });
+});
+
+ipcMain.on("raw:material:edit:submit", function (e, item) {
+  update(item, function (reply) {
+    e.reply("raw:material:edit:reply", reply);
   });
 });
 
@@ -65,7 +81,7 @@ ipcMain.on("raw:material:add:submit:success", function (e, item) {
 ipcMain.on("raw:material:list:loaded", function (e, item) {
   let html = "";
 
-  get_raw_material_list(function (rows) {
+  get_list(function (rows) {
     let sl = 1;
     rows.forEach(function (row) {
       html += "<tr>";
@@ -84,6 +100,11 @@ ipcMain.on("raw:material:list:loaded", function (e, item) {
         '<button type="button" class="btn btn-danger" onClick="deleteMe(\'' +
         row.raw_mat_id +
         "')\" >Delete</button>";
+
+      html +=
+        '&nbsp;<button type="button" class="btn btn-primary" onClick="editMe(\'' +
+        row.raw_mat_id +
+        "')\" >Edit</button>";
       html += "</td>";
 
       html += "</tr>";
@@ -117,6 +138,53 @@ function insert(item, callback) {
     "', '" +
     item[1] +
     "')";
+
+  connection.query(query, function (err, result) {
+    if (err) {
+      console.log("An error ocurred performing the query.");
+      console.log(err);
+      callback(err.sqlMessage);
+      return;
+    }
+
+    callback("success");
+  });
+
+  // Close the connection
+  connection.end(function () {
+    // The connection has been closed
+  });
+}
+
+function update(item, callback) {
+  const connection = mysql.createConnection(getConnectionString());
+
+  // connect to mysql
+  connection.connect(function (err) {
+    // in case of error
+    if (err) {
+      console.log(err.code);
+      console.log(err.fatal);
+
+      dblost();
+    }
+  });
+
+  // Perform a query
+
+  query =
+    "update  raw_material_list \
+    set \
+    raw_mat_name = '" +
+    item[1] +
+    "' , \
+    raw_mat_unit = '" +
+    item[2] +
+    "'\
+    where\
+    raw_mat_id = '" +
+    item[0] +
+    "' ";
 
   connection.query(query, function (err, result) {
     if (err) {
@@ -170,7 +238,7 @@ function deleteQuery(id, callback) {
   });
 }
 
-function get_raw_material_list(callback) {
+function get_list(callback) {
   const connection = mysql.createConnection(getConnectionString());
 
   // connect to mysql
@@ -186,6 +254,39 @@ function get_raw_material_list(callback) {
 
   // Perform a query
   $query = "select * from raw_material_list order by raw_mat_id desc";
+
+  connection.query($query, function (err, rows, fields) {
+    if (err) {
+      console.log("An error ocurred performing the query.");
+      console.log(err);
+      return;
+    }
+
+    callback(rows);
+  });
+
+  // Close the connection
+  connection.end(function () {
+    // The connection has been closed
+  });
+}
+
+function get_by_id(id, callback) {
+  const connection = mysql.createConnection(getConnectionString());
+
+  // connect to mysql
+  connection.connect(function (err) {
+    // in case of error
+    if (err) {
+      console.log(err.code);
+      console.log(err.fatal);
+
+      dblost();
+    }
+  });
+
+  // Perform a query
+  $query = "select * from raw_material_list where raw_mat_id=" + id;
 
   connection.query($query, function (err, rows, fields) {
     if (err) {
