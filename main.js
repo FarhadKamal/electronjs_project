@@ -3,13 +3,14 @@ const { app, BrowserWindow, ipcMain, Menu, session } = require("electron");
 const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
-const { createAnotherWindow } = require("./controller/user");
+const { get_user_details } = require("./controller/user");
 const { createLoginWindow } = require("./controller/login");
 
 // development or production
 process.env.NODE_ENV = "development";
 
 let mainWindow;
+let userRole;
 
 //Menu ITEM After Login
 const mainMenuTemplate = [
@@ -43,12 +44,11 @@ const mainMenuTemplate = [
         },
       },
       {
-        label: "Another",
+        label: "Get User Details",
 
         click() {
           
-        console.log("Another Windpw")
-
+          console.log(get_user_details())
        
         },
       },
@@ -185,7 +185,7 @@ ipcMain.on("login:success", function (e, item) {
     session.defaultSession.cookies
       .get({ url: "http://myapp.com" })
       .then((cookies) => {
-      
+        userRole=cookies[0].value
         const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
         Menu.setApplicationMenu(mainMenu);
         mainWindow.loadFile("dashboard.html");

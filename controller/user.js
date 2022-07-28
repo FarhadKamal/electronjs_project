@@ -1,40 +1,15 @@
 const mysql = require("mysql");
-const { ipcMain, BrowserWindow, session } = require("electron");
+const { ipcMain, session } = require("electron");
 const { getConnectionString, dblost } = require("../db");
-
-let subWindow = null;
-
-const createAnotherWindow = () => {
-  if (!subWindow) {
-    subWindow = new BrowserWindow({
-      width: 600,
-      height: 400,
-      autoHideMenuBar: true,
-
-      webPreferences: {
-        nodeIntegration: true,
-        contextIsolation: false,
-      },
-    });
-
-    subWindow.loadFile("index.html");
-
-    subWindow.on("closed", function () {
-      subWindow = null;
-    });
-  } else {
-    subWindow.focus();
-  }
-};
-
-
+let userData=null
 
 ipcMain.on("user:name:request", function (e, item) {
   session.defaultSession.cookies
     .get({ url: "http://myapp.com" })
     .then((cookies) => {
       get_by_user_name(cookies[0].name, function (row) {
-        console.log(row);
+        //console.log(row);
+        userdata=row
         e.reply("user:name:send", row);
       });
     })
@@ -42,6 +17,11 @@ ipcMain.on("user:name:request", function (e, item) {
       console.log(error);
     });
 });
+
+function get_user_details(){
+
+  return userData
+}
 
 function get_by_user_name(user, callback) {
   const connection = mysql.createConnection(getConnectionString());
@@ -76,4 +56,5 @@ function get_by_user_name(user, callback) {
   });
 }
 
-module.exports = { createAnotherWindow };
+
+module.exports = { get_user_details };
