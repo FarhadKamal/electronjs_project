@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 
-    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
     <title>Raw Materials List</title>
   </head>
@@ -49,10 +49,21 @@
       });
 
       function deleteMe(id) {
-        if (confirm("Are you sure you want to remove it?") == true) {
-          ipcRenderer.send("raw:material:delete:request", id);
-        }
+        // if (confirm("Are you sure you want to remove it?") == true) {
+        //   ipcRenderer.send("raw:material:delete:request", id);
+        // }
+       ipcRenderer.send("raw:material:delete:request", id);
+
+    
+         
       }
+      ipcRenderer.on("raw:material:list:deleted", function (e, reply) {
+  
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-danger";
+          document.querySelector("#msg").textContent = reply;
+  
+      });
     </script>
   </body>
 </html>

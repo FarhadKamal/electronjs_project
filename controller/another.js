@@ -3,7 +3,7 @@ const {  BrowserWindow } = require("electron");
 
 let subWindow=null;
 
-const createRawMaterialWindow2 = () => {
+const createAnotherWindow = () => {
   
 if(!subWindow){
 
@@ -30,4 +30,4 @@ if(!subWindow){
 };
 
 
-module.exports = { createRawMaterialWindow2 };
+module.exports = { createAnotherWindow };

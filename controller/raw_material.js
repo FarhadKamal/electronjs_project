@@ -1,5 +1,5 @@
 const mysql = require("mysql");
-const { ipcMain, BrowserWindow } = require("electron");
+const { ipcMain, BrowserWindow, dialog } = require("electron");
 const { getConnectionString, dblost } = require("../db");
 let subWindow = null;
 
@@ -16,7 +16,7 @@ const createRawMaterialWindow = () => {
       },
     });
 
-    subWindow.loadFile("view/raw_material_list.html");
+    subWindow.loadFile("view/raw_material/list.html");
 
     subWindow.on("closed", function () {
       subWindow = null;
@@ -27,10 +27,20 @@ const createRawMaterialWindow = () => {
 };
 
 ipcMain.on("raw:material:delete:request", function (e, id) {
-  deleteQuery(id, function (reply) {
-    e.reply("raw:material:list:deleted", reply);
-    subWindow.loadFile("view/raw_material_list.html");
+  let response = dialog.showMessageBoxSync(subWindow, {
+    type: "question",
+    buttons: ["Yes", "No"],
+    title: "Confirm",
+    message: "Are you sure you want to delete?",
   });
+  if (response == 0) {
+    deleteQuery(id, function (reply) {
+ 
+      if(reply=='success')
+      subWindow.loadFile("view/raw_material/list.html");
+      else e.reply("raw:material:list:deleted", reply);
+    });
+  }
 });
 
 ipcMain.on("raw:material:add:submit", function (e, item) {
@@ -40,11 +50,15 @@ ipcMain.on("raw:material:add:submit", function (e, item) {
 });
 
 ipcMain.on("raw:material:add:click", function (e, item) {
-  subWindow.loadFile("view/raw_material_add.html");
+  subWindow.loadFile("view/raw_material/add.html");
+});
+
+ipcMain.on("raw:material:list:click", function (e, item) {
+  subWindow.loadFile("view/raw_material/list.html");
 });
 
 ipcMain.on("raw:material:add:submit:success", function (e, item) {
-  subWindow.loadFile("view/raw_material_list.html");
+  subWindow.loadFile("view/raw_material/list.html");
   e.reply("raw:material:add:submit:reply", "added");
 });
 
@@ -143,7 +157,7 @@ function deleteQuery(id, callback) {
     if (err) {
       console.log("An error ocurred performing the query.");
       console.log(err);
-      callback(err.sqlMessage);
+      callback(err);
       return;
     }
 

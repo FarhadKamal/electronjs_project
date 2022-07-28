@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain, Menu, session } = require("electron");
 const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
-const { createRawMaterialWindow2 } = require("./controller/raw_material2");
+const { createAnotherWindow } = require("./controller/another");
 const { createLoginWindow } = require("./controller/login");
 
 // development or production
@@ -43,10 +43,10 @@ const mainMenuTemplate = [
         },
       },
       {
-        label: "Raw Material2",
+        label: "Another",
 
         click() {
-          createRawMaterialWindow2();
+          createAnotherWindow();
         },
       },
 
