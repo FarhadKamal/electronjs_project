@@ -73,10 +73,6 @@ ipcMain.on("raw:material:list:click", function (e, item) {
   subWindow.loadFile("view/raw_material/list.html");
 });
 
-ipcMain.on("raw:material:add:submit:success", function (e, item) {
-  subWindow.loadFile("view/raw_material/list.html");
-  e.reply("raw:material:add:submit:reply", "added");
-});
 
 ipcMain.on("raw:material:list:loaded", function (e, item) {
   let html = "";
@@ -253,7 +249,7 @@ function get_list(callback) {
   });
 
   // Perform a query
-  $query = "select * from raw_material_list order by raw_mat_id desc";
+  $query = "select * from raw_material_list order by raw_mat_name";
 
   connection.query($query, function (err, rows, fields) {
     if (err) {

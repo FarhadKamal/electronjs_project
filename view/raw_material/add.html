@@ -69,7 +69,7 @@
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
 
-            ipcRenderer.send("raw:material:add:submit:success", "success");
+            document.querySelector("#mtname").value=""
 
             document.querySelector("#msg").textContent = "Added Successfully!";
           } else {
