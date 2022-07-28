@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <link rel="stylesheet" href="./css/bootstrap.min.css" />
+    <title>inventory</title>
+  </head>
+  <body>
+    <div class="alert alert-info" id="msg" role="alert"></div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("dashboard:user:name:request", "hello");
+
+          ipcRenderer.on("dashboard:user:name:send", function (e, name) {
+            document.querySelector("#msg").textContent = "Welcome " + name;
+          });
+        },
+        false
+      );
+    </script>
+  </body>
+</html>

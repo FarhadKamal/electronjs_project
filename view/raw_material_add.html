@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <link rel="stylesheet" href="../css/bootstrap.min.css" />
+
+    <title>Raw Materials</title>
+  </head>
+  <body>
+    <div class="alert alert-dark" id="msg" role="alert"></div>
+
+    <div class="container">
+      <form>
+        <!-- Email input -->
+        <div class="form-outline mb-4">
+          <input
+            type="text"
+            id="mtname"
+            autofocus
+            class="form-control"
+            required
+          />
+          <label class="form-label">Raw Material Name</label>
+        </div>
+
+        <div class="form-outline mb-4">
+          <select id="mtunit" class="form-select">
+            <option value="kg">kg (kilogram)</option>
+            <option value="m">m (metre)</option>
+          </select>
+          <label class="form-label">Unit</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">
+          Add
+        </button>
+      </form>
+    </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+      const form = document.querySelector("form");
+      form.addEventListener("submit", submitForm);
+
+      document.querySelector("#msg").style.visibility = "hidden";
+
+      function submitForm(e) {
+        e.preventDefault();
+
+        const mtname = document.querySelector("#mtname").value;
+        const mtunit = document.querySelector("#mtunit").value;
+        ipcRenderer.send("raw:material:add:submit", [mtname, mtunit]);
+
+        ipcRenderer.on("raw:material:add:reply", function (e, reply) {
+          if (reply == "success") {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-success";
+
+            ipcRenderer.send("raw:material:add:submit:success", "success");
+
+            document.querySelector("#msg").textContent = "Added Successfully!";
+          } else {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-danger";
+            document.querySelector("#msg").textContent = reply;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
