@@ -11,6 +11,117 @@ MySQL - 5.5.5-10.4.21-MariaDB : Database - wood
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
+/*Table structure for table `finished_good_components` */
+
+CREATE TABLE `finished_good_components` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `finished_good_id` int(11) DEFAULT NULL,
+  `package_id` int(11) DEFAULT NULL,
+  `qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_finished_good_components` (`package_id`),
+  KEY `FK_finished_good_components2` (`finished_good_id`),
+  CONSTRAINT `FK_finished_good_components` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`),
+  CONSTRAINT `FK_finished_good_components2` FOREIGN KEY (`finished_good_id`) REFERENCES `finished_good_list` (`finished_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `finished_good_components` */
+
+/*Table structure for table `finished_good_list` */
+
+CREATE TABLE `finished_good_list` (
+  `finished_good_id` int(11) NOT NULL AUTO_INCREMENT,
+  `semi_good_id` int(11) DEFAULT NULL,
+  `finished_good_name` varchar(255) DEFAULT NULL,
+  `finished_good_unit` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`finished_good_id`),
+  UNIQUE KEY `raw_material_name` (`finished_good_name`),
+  KEY `FK_finished_good_list` (`semi_good_id`),
+  CONSTRAINT `FK_finished_good_list` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `finished_good_list` */
+
+/*Table structure for table `finished_good_planning` */
+
+CREATE TABLE `finished_good_planning` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `planning_date` datetime DEFAULT NULL,
+  `finished_good_id` int(11) DEFAULT NULL,
+  `finished_good_qty` double(18,2) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `start_status` int(1) DEFAULT 0,
+  `completed_date` datetime DEFAULT NULL,
+  `complete_status` int(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `FK_finished_good_planning` (`finished_good_id`),
+  CONSTRAINT `FK_finished_good_planning` FOREIGN KEY (`finished_good_id`) REFERENCES `finished_good_list` (`finished_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `finished_good_planning` */
+
+/*Table structure for table `finished_good_planning_details` */
+
+CREATE TABLE `finished_good_planning_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `planning_id` int(11) DEFAULT NULL,
+  `package_id` int(11) DEFAULT NULL,
+  `total_package_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_finished_good_planning_details` (`package_id`),
+  KEY `FK_finished_good_planning_details1` (`planning_id`),
+  CONSTRAINT `FK_finished_good_planning_details` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`),
+  CONSTRAINT `FK_finished_good_planning_details1` FOREIGN KEY (`planning_id`) REFERENCES `finished_good_planning` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `finished_good_planning_details` */
+
+/*Table structure for table `finished_good_stock` */
+
+CREATE TABLE `finished_good_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stock_date` timestamp NULL DEFAULT current_timestamp(),
+  `stock_type` varchar(50) DEFAULT NULL,
+  `ref_no` int(11) DEFAULT NULL,
+  `ref_source` varchar(50) DEFAULT NULL,
+  `finished_good_id` int(11) DEFAULT NULL,
+  `stock_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_aa` (`finished_good_id`),
+  CONSTRAINT `FK_finished_good_stock` FOREIGN KEY (`finished_good_id`) REFERENCES `finished_good_list` (`finished_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `finished_good_stock` */
+
+/*Table structure for table `package_list` */
+
+CREATE TABLE `package_list` (
+  `package_id` int(11) NOT NULL AUTO_INCREMENT,
+  `package_name` varchar(255) DEFAULT NULL,
+  `package_unit` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`package_id`),
+  UNIQUE KEY `raw_material_name` (`package_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `package_list` */
+
+/*Table structure for table `package_stock` */
+
+CREATE TABLE `package_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stock_date` timestamp NULL DEFAULT current_timestamp(),
+  `stock_type` varchar(50) DEFAULT NULL,
+  `ref_no` int(11) DEFAULT NULL,
+  `ref_source` varchar(50) DEFAULT NULL,
+  `package_id` int(11) DEFAULT NULL,
+  `stock_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_aa` (`package_id`),
+  CONSTRAINT `FK_package_stock` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `package_stock` */
+
 /*Table structure for table `raw_material_list` */
 
 CREATE TABLE `raw_material_list` (
@@ -19,9 +130,107 @@ CREATE TABLE `raw_material_list` (
   `raw_mat_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`raw_mat_id`),
   UNIQUE KEY `raw_material_name` (`raw_mat_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `raw_material_list` */
+
+insert  into `raw_material_list`(`raw_mat_id`,`raw_mat_name`,`raw_mat_unit`) values (3,'mango','kg');
+
+/*Table structure for table `raw_material_stock` */
+
+CREATE TABLE `raw_material_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stock_date` timestamp NULL DEFAULT current_timestamp(),
+  `stock_type` varchar(50) DEFAULT NULL,
+  `ref_no` int(11) DEFAULT NULL,
+  `ref_source` varchar(50) DEFAULT NULL,
+  `raw_mat_id` int(11) DEFAULT NULL,
+  `stock_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_aa` (`raw_mat_id`),
+  CONSTRAINT `FK_raw_material_stock` FOREIGN KEY (`raw_mat_id`) REFERENCES `raw_material_list` (`raw_mat_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `raw_material_stock` */
+
+/*Table structure for table `semi_good_components` */
+
+CREATE TABLE `semi_good_components` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `semi_good_id` int(11) DEFAULT NULL,
+  `raw_mat_id` int(11) DEFAULT NULL,
+  `qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_semi_good_components` (`raw_mat_id`),
+  KEY `FK_semi_good_components2` (`semi_good_id`),
+  CONSTRAINT `FK_semi_good_components` FOREIGN KEY (`raw_mat_id`) REFERENCES `raw_material_list` (`raw_mat_id`),
+  CONSTRAINT `FK_semi_good_components2` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `semi_good_components` */
+
+/*Table structure for table `semi_good_list` */
+
+CREATE TABLE `semi_good_list` (
+  `semi_good_id` int(11) NOT NULL AUTO_INCREMENT,
+  `semi_good_name` varchar(255) DEFAULT NULL,
+  `semi_good_unit` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`semi_good_id`),
+  UNIQUE KEY `raw_material_name` (`semi_good_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `semi_good_list` */
+
+/*Table structure for table `semi_good_planning` */
+
+CREATE TABLE `semi_good_planning` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `planning_date` datetime DEFAULT NULL,
+  `semi_good_id` int(11) DEFAULT NULL,
+  `semi_good_qty` double(18,2) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `start_status` int(1) DEFAULT 0,
+  `completed_date` datetime DEFAULT NULL,
+  `complete_status` int(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `FK_semi_good_planning` (`semi_good_id`),
+  CONSTRAINT `FK_semi_good_planning` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `semi_good_planning` */
+
+/*Table structure for table `semi_good_planning_details` */
+
+CREATE TABLE `semi_good_planning_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `planning_id` int(11) DEFAULT NULL,
+  `raw_mat_id` int(11) DEFAULT NULL,
+  `total_raw_mat_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_semi_good_planning_details` (`planning_id`),
+  KEY `FK_semi_good_planning_details2` (`raw_mat_id`),
+  CONSTRAINT `FK_semi_good_planning_details` FOREIGN KEY (`planning_id`) REFERENCES `semi_good_planning` (`id`),
+  CONSTRAINT `FK_semi_good_planning_details2` FOREIGN KEY (`raw_mat_id`) REFERENCES `raw_material_list` (`raw_mat_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `semi_good_planning_details` */
+
+/*Table structure for table `semi_good_stock` */
+
+CREATE TABLE `semi_good_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `stock_date` timestamp NULL DEFAULT current_timestamp(),
+  `stock_type` varchar(50) DEFAULT NULL,
+  `ref_no` int(11) DEFAULT NULL,
+  `ref_source` varchar(50) DEFAULT NULL,
+  `semi_good_id` int(11) DEFAULT NULL,
+  `stock_qty` double(18,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_semi_good_stock` (`semi_good_id`),
+  CONSTRAINT `FK_semi_good_stock` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `semi_good_stock` */
 
 /*Table structure for table `users` */
 
