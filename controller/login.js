@@ -9,8 +9,8 @@ let loginWindow = null;
 const createLoginWindow = () => {
   if (!loginWindow) {
     loginWindow = new BrowserWindow({
-      width: 400,
-      height: 400,
+      width: 1200,
+      height: 800,
       autoHideMenuBar: true,
 
       webPreferences: {

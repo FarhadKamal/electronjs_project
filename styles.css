@@ -1,3 +1,29 @@
 /* styles.css */
 
 /* Add styles here to customize the appearance of your app */
+body {
+  background-color: #42b9f4;
+}
+
+.header {
+  background-color: #d5ffa5;
+  text-align: center;
+  color: #111;
+  -webkit-text-stroke: 1px black;
+  box-shadow: 2px 2px 4px black;
+  border-style: solid;
+  border-width: 2px;
+  border-color: black;
+}
+
+.header:hover {
+  background-color: lightgreen;
+  font-weight: bold;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}

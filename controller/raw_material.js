@@ -7,8 +7,8 @@ let trackData;
 const createRawMaterialWindow = () => {
   if (!subWindow) {
     subWindow = new BrowserWindow({
-      width: 800,
-      height: 600,
+      width: 1200,
+      height: 800,
       autoHideMenuBar: true,
 
       webPreferences: {
@@ -92,14 +92,14 @@ ipcMain.on("raw:material:list:loaded", function (e, item) {
 
       html += "<td>";
       html +=
-        '<button type="button" class="btn btn-danger" onClick="deleteMe(\'' +
+        '<button type="button" class="btn btn-danger btn-sm rounded-0" onClick="deleteMe(\'' +
         row.raw_mat_id +
-        "')\" >Delete</button>";
+        "')\" ><i class='material-icons'>&#xE872;</i></button> &nbsp;";
 
       html +=
-        '&nbsp;<button type="button" class="btn btn-primary" onClick="editMe(\'' +
+        '<button type="button" class="btn btn-success btn-sm rounded-0" onClick="editMe(\'' +
         row.raw_mat_id +
-        "')\" >Edit</button>";
+        "')\" ><i class='material-icons'>&#xE254;</i></button>";
       html += "</td>";
 
       html += "</tr>";

@@ -5,27 +5,42 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/custom-style.css" />
+    <link rel="stylesheet" href="../../css/font-awesome.min.css" />
 
     <title>Raw Materials List</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
+   
     <div class="container">
-      <button type="button" id="btn-add" class="btn btn-primary btn-block mb-4">
-        Add Material
-      </button>
-      <table id="mat-tab" class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">SL#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Unit</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-6">
+              <h2>Add <b>Material</b></h2>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" id="btn-add" class="btn btn-success">
+                <i class="material-icons">&#xE147;</i> <span>Add New</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="table table-bordered" id="mat-tab" style="width: 100%">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col" width="10%">SL#</th>
+              <th scope="col" width="60%">Name</th>
+              <th scope="col" width="10%">Unit</th>
+              <th scope="col" width="20%">Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
+
     <script>
       const electron = require("electron");
       const { ipcRenderer } = electron;
