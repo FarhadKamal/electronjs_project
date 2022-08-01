@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Raw Material</title>
+    <title>Semi Good</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -22,20 +22,18 @@
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
-          <input type="hidden" id="mtid" class="form-control" />
           <input
             type="text"
-            id="mtname"
+            id="seminame"
             autofocus
             class="form-control"
             required
           />
-
-          <label class="form-label">Raw Material Name</label>
+          <label class="form-label">Semi Good Name</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="mtunit" class="form-select">
+          <select id="semiunit" class="form-select">
             <option value="kg">kg (kilogram)</option>
             <option value="m">m (metre)</option>
           </select>
@@ -44,7 +42,7 @@
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary btn-block mb-4">
-          Update
+          Add
         </button>
       </form>
     </div>
@@ -53,7 +51,6 @@
       const electron = require("electron");
       const { ipcRenderer } = electron;
       const form = document.querySelector("form");
-
       form.addEventListener("submit", submitForm);
 
       document.querySelector("#msg").style.visibility = "hidden";
@@ -61,36 +58,24 @@
       const listLink = document.querySelector("#btn-list");
 
       listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("raw:material:list:click", "clicked");
-      });
-
-      document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-          ipcRenderer.send("raw:material:edit:loaded", "loaded");
-        },
-        false
-      );
-
-      ipcRenderer.on("raw:material:edit:fetched", function (e, data) {
-        document.querySelector("#mtid").value = data[0].raw_mat_id;
-        document.querySelector("#mtname").value = data[0].raw_mat_name;
-        document.querySelector("#mtunit").value = data[0].raw_mat_unit;
-
+        ipcRenderer.send("semi:good:list:click", "clicked");
       });
 
       function submitForm(e) {
         e.preventDefault();
-        const mtname = document.querySelector("#mtname").value;
-        const mtunit = document.querySelector("#mtunit").value;
-        const mtid = document.querySelector("#mtid").value;
-        ipcRenderer.send("raw:material:edit:submit", [mtid,mtname, mtunit]);
 
-        ipcRenderer.on("raw:material:edit:reply", function (e, reply) {
+        const seminame = document.querySelector("#seminame").value;
+        const semiunit = document.querySelector("#semiunit").value;
+        ipcRenderer.send("semi:good:add:submit", [seminame, semiunit]);
+
+        ipcRenderer.on("semi:good:add:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
-            document.querySelector("#msg").className = "alert alert-success"; 
-            document.querySelector("#msg").textContent = "Edited Successfully!";
+            document.querySelector("#msg").className = "alert alert-success";
+
+            document.querySelector("#seminame").value = "";
+
+            document.querySelector("#msg").textContent = "Added Successfully!";
           } else {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-danger";

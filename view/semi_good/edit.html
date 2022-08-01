@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Raw Material</title>
+    <title>Semi Good</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -22,20 +22,20 @@
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
-          <input type="hidden" id="mtid" class="form-control" />
+          <input type="hidden" id="semiid" class="form-control" />
           <input
             type="text"
-            id="mtname"
+            id="seminame"
             autofocus
             class="form-control"
             required
           />
 
-          <label class="form-label">Raw Material Name</label>
+          <label class="form-label">Semi Good Name</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="mtunit" class="form-select">
+          <select id="semiunit" class="form-select">
             <option value="kg">kg (kilogram)</option>
             <option value="m">m (metre)</option>
           </select>
@@ -61,35 +61,34 @@
       const listLink = document.querySelector("#btn-list");
 
       listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("raw:material:list:click", "clicked");
+        ipcRenderer.send("semi:good:list:click", "clicked");
       });
 
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("raw:material:edit:loaded", "loaded");
+          ipcRenderer.send("semi:good:edit:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("raw:material:edit:fetched", function (e, data) {
-        document.querySelector("#mtid").value = data[0].raw_mat_id;
-        document.querySelector("#mtname").value = data[0].raw_mat_name;
-        document.querySelector("#mtunit").value = data[0].raw_mat_unit;
-
+      ipcRenderer.on("semi:good:edit:fetched", function (e, data) {
+        document.querySelector("#semiid").value = data[0].semi_good_id;
+        document.querySelector("#seminame").value = data[0].semi_good_name;
+        document.querySelector("#semiunit").value = data[0].semi_good_unit;
       });
 
       function submitForm(e) {
         e.preventDefault();
-        const mtname = document.querySelector("#mtname").value;
-        const mtunit = document.querySelector("#mtunit").value;
-        const mtid = document.querySelector("#mtid").value;
-        ipcRenderer.send("raw:material:edit:submit", [mtid,mtname, mtunit]);
+        const seminame = document.querySelector("#seminame").value;
+        const semiunit = document.querySelector("#semiunit").value;
+        const semiid = document.querySelector("#semiid").value;
+        ipcRenderer.send("semi:good:edit:submit", [semiid, seminame, semiunit]);
 
-        ipcRenderer.on("raw:material:edit:reply", function (e, reply) {
+        ipcRenderer.on("semi:good:edit:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
-            document.querySelector("#msg").className = "alert alert-success"; 
+            document.querySelector("#msg").className = "alert alert-success";
             document.querySelector("#msg").textContent = "Edited Successfully!";
           } else {
             document.querySelector("#msg").style.visibility = "visible";

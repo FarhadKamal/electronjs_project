@@ -4,7 +4,7 @@ const { getConnectionString, dblost } = require("../db");
 let subWindow = null;
 let trackData;
 
-const createRawMaterialWindow = () => {
+const createSemiGoodWindow = () => {
   if (!subWindow) {
     subWindow = new BrowserWindow({
       width: 1200,
@@ -17,7 +17,7 @@ const createRawMaterialWindow = () => {
       },
     });
 
-    subWindow.loadFile("view/raw_material/list.html");
+    subWindow.loadFile("view/semi_good/list.html");
 
     subWindow.on("closed", function () {
       subWindow = null;
@@ -27,7 +27,7 @@ const createRawMaterialWindow = () => {
   }
 };
 
-ipcMain.on("raw:material:delete:request", function (e, id) {
+ipcMain.on("semi:good:delete:request", function (e, id) {
   let response = dialog.showMessageBoxSync(subWindow, {
     type: "question",
     buttons: ["Yes", "No"],
@@ -36,44 +36,44 @@ ipcMain.on("raw:material:delete:request", function (e, id) {
   });
   if (response == 0) {
     deleteQuery(id, function (reply) {
-      if (reply == "success") subWindow.loadFile("view/raw_material/list.html");
-      else e.reply("raw:material:list:deleted", reply);
+      if (reply == "success") subWindow.loadFile("view/semi_good/list.html");
+      else e.reply("semi:good:list:deleted", reply);
     });
   }
 });
 
-ipcMain.on("raw:material:edit:request", function (e, id) {
+ipcMain.on("semi:good:edit:request", function (e, id) {
   get_by_id(id, function (row) {
     trackData = row;
-    subWindow.loadFile("view/raw_material/edit.html");
+    subWindow.loadFile("view/semi_good/edit.html");
   });
 });
 
-ipcMain.on("raw:material:edit:loaded", function (e, id) {
-  e.reply("raw:material:edit:fetched", trackData);
+ipcMain.on("semi:good:edit:loaded", function (e, id) {
+  e.reply("semi:good:edit:fetched", trackData);
 });
 
-ipcMain.on("raw:material:add:submit", function (e, item) {
+ipcMain.on("semi:good:add:submit", function (e, item) {
   insert(item, function (reply) {
-    e.reply("raw:material:add:reply", reply);
+    e.reply("semi:good:add:reply", reply);
   });
 });
 
-ipcMain.on("raw:material:edit:submit", function (e, item) {
+ipcMain.on("semi:good:edit:submit", function (e, item) {
   update(item, function (reply) {
-    e.reply("raw:material:edit:reply", reply);
+    e.reply("semi:good:edit:reply", reply);
   });
 });
 
-ipcMain.on("raw:material:add:click", function (e, item) {
-  subWindow.loadFile("view/raw_material/add.html");
+ipcMain.on("semi:good:add:click", function (e, item) {
+  subWindow.loadFile("view/semi_good/add.html");
 });
 
-ipcMain.on("raw:material:list:click", function (e, item) {
-  subWindow.loadFile("view/raw_material/list.html");
+ipcMain.on("semi:good:list:click", function (e, item) {
+  subWindow.loadFile("view/semi_good/list.html");
 });
 
-ipcMain.on("raw:material:list:loaded", function (e, item) {
+ipcMain.on("semi:good:list:loaded", function (e, item) {
   let html = "";
 
   get_list(function (rows) {
@@ -84,21 +84,21 @@ ipcMain.on("raw:material:list:loaded", function (e, item) {
       html += sl;
       html += "</td>";
       html += "<td>";
-      html += row.raw_mat_name;
+      html += row.semi_good_name;
       html += "</td>";
       html += "<td>";
-      html += row.raw_mat_unit;
+      html += row.semi_good_unit;
       html += "</td>";
 
       html += "<td>";
       html +=
         '<button type="button" class="btn btn-danger btn-sm rounded-0" onClick="deleteMe(\'' +
-        row.raw_mat_id +
+        row.semi_good_id +
         "')\" ><i class='material-icons'>&#xE872;</i></button> &nbsp;";
 
       html +=
         '<button type="button" class="btn btn-success btn-sm rounded-0" onClick="editMe(\'' +
-        row.raw_mat_id +
+        row.semi_good_id +
         "')\" ><i class='material-icons'>&#xE254;</i></button>";
       html += "</td>";
 
@@ -106,7 +106,7 @@ ipcMain.on("raw:material:list:loaded", function (e, item) {
       sl++;
     });
 
-    e.reply("raw:material:list:table", html);
+    e.reply("semi:good:list:table", html);
   });
 });
 
@@ -126,14 +126,14 @@ function insert(item, callback) {
 
   //data cleaning
 
-  let matname = item[0].replace(/['"]+/g, "");
+  let seminame = item[0].replace(/['"]+/g, "");
 
   // Perform a query
 
   query =
-    "INSERT INTO raw_material_list (raw_mat_name, raw_mat_unit) VALUES \
+    "INSERT INTO semi_good_list (semi_good_name, semi_good_unit) VALUES \
    ('" +
-    matname +
+    seminame +
     "', '" +
     item[1] +
     "')";
@@ -176,16 +176,16 @@ function update(item, callback) {
   // Perform a query
 
   query =
-    "update  raw_material_list \
+    "update  semi_good_list \
     set \
-    raw_mat_name = '" +
+    semi_good_name = '" +
     matname +
     "' , \
-    raw_mat_unit = '" +
+    semi_good_unit = '" +
     item[2] +
     "'\
     where\
-    raw_mat_id = '" +
+    semi_good_id = '" +
     item[0] +
     "' ";
 
@@ -222,7 +222,7 @@ function deleteQuery(id, callback) {
 
   // Perform a query
 
-  query = "delete from raw_material_list where raw_mat_id=" + id;
+  query = "delete from semi_good_list where semi_good_id=" + id;
 
   connection.query(query, function (err, result) {
     if (err) {
@@ -256,7 +256,7 @@ function get_list(callback) {
   });
 
   // Perform a query
-  query = "select * from raw_material_list order by raw_mat_name";
+  query = "select * from semi_good_list order by semi_good_name";
 
   connection.query(query, function (err, rows, fields) {
     if (err) {
@@ -289,7 +289,7 @@ function get_by_id(id, callback) {
   });
 
   // Perform a query
-  query = "select * from raw_material_list where raw_mat_id=" + id;
+  query = "select * from semi_good_list where semi_good_id=" + id;
 
   connection.query(query, function (err, rows, fields) {
     if (err) {
@@ -297,7 +297,6 @@ function get_by_id(id, callback) {
       console.log(err);
       return;
     }
-
     callback(rows);
   });
 
@@ -307,4 +306,4 @@ function get_by_id(id, callback) {
   });
 }
 
-module.exports = { createRawMaterialWindow };
+module.exports = { createSemiGoodWindow };

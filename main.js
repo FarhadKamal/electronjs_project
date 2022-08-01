@@ -3,6 +3,8 @@ const { app, BrowserWindow, ipcMain, Menu, session } = require("electron");
 const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
+const { createSemiGoodWindow } = require("./controller/semi_good");
+
 const { get_user_details } = require("./controller/user");
 const { createLoginWindow } = require("./controller/login");
 
@@ -44,12 +46,10 @@ const mainMenuTemplate = [
         },
       },
       {
-        label: "Get User Details",
+        label: "Semi Good",
 
         click() {
-          
-          console.log(get_user_details())
-       
+          createSemiGoodWindow()      
         },
       },
     ],

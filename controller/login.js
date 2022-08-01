@@ -86,14 +86,14 @@ function login(callback) {
   });
 
   // Perform a query
-  $query =
+  query =
     "select * from users where username='" +
     user +
     "' and users.password=sha1('" +
     pass +
     "')";
 
-  connection.query($query, function (err, rows, fields) {
+  connection.query(query, function (err, rows, fields) {
     if (err) {
       console.log("An error ocurred performing the query.");
       console.log(err);
