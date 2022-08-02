@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Semi Good</title>
+    <title>Package</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -22,18 +22,20 @@
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
+          <input type="hidden" id="packid" class="form-control" />
           <input
             type="text"
-            id="seminame"
+            id="packname"
             autofocus
             class="form-control"
             required
           />
-          <label class="form-label">Semi Good Name</label>
+
+          <label class="form-label">Package</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="semiunit" class="form-select">
+          <select id="packunit" class="form-select">
             <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
@@ -41,7 +43,7 @@
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary btn-block mb-4">
-          Add
+          Update
         </button>
       </form>
     </div>
@@ -50,6 +52,7 @@
       const electron = require("electron");
       const { ipcRenderer } = electron;
       const form = document.querySelector("form");
+
       form.addEventListener("submit", submitForm);
 
       document.querySelector("#msg").style.visibility = "hidden";
@@ -57,41 +60,42 @@
       const listLink = document.querySelector("#btn-list");
 
       listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("semi:good:list:click", "clicked");
+        ipcRenderer.send("pack:list:click", "clicked");
       });
 
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("semi:good:add:loaded", "loaded");
+          ipcRenderer.send("pack:edit:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("semi:good:add:fetched", function (e, data) {
-        const semiunit = document.querySelector("#semiunit");
-        for (var k = 0; k < data.length; k++) {
-          semiunit.options.add(
-            new Option(data[k].unit_details, data[k].unit_name)
+      ipcRenderer.on("pack:edit:fetched", function (e, data) {
+        document.querySelector("#packid").value = data[0][0].package_id;
+        document.querySelector("#packname").value = data[0][0].package_name;
+
+        const packunit = document.querySelector("#packunit");
+        for (var k = 0; k < data[1].length; k++) {
+          packunit.options.add(
+            new Option(data[1][k].unit_details, data[1][k].unit_name)
           );
         }
+        document.querySelector("#packunit").value = data[0][0].package_unit;
       });
 
       function submitForm(e) {
         e.preventDefault();
+        const packname = document.querySelector("#packname").value;
+        const packunit = document.querySelector("#packunit").value;
+        const packid = document.querySelector("#packid").value;
+        ipcRenderer.send("pack:edit:submit", [packid, packname, packunit]);
 
-        const seminame = document.querySelector("#seminame").value;
-        const semiunit = document.querySelector("#semiunit").value;
-        ipcRenderer.send("semi:good:add:submit", [seminame, semiunit]);
-
-        ipcRenderer.on("semi:good:add:reply", function (e, reply) {
+        ipcRenderer.on("pack:edit:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
-
-            document.querySelector("#seminame").value = "";
-
-            document.querySelector("#msg").textContent = "Added Successfully!";
+            document.querySelector("#msg").textContent = "Edited Successfully!";
           } else {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-danger";

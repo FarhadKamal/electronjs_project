@@ -36,8 +36,7 @@
 
         <div class="form-outline mb-4">
           <select id="semiunit" class="form-select">
-            <option value="kg">kg (kilogram)</option>
-            <option value="m">m (metre)</option>
+            <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
         </div>
@@ -73,9 +72,16 @@
       );
 
       ipcRenderer.on("semi:good:edit:fetched", function (e, data) {
-        document.querySelector("#semiid").value = data[0].semi_good_id;
-        document.querySelector("#seminame").value = data[0].semi_good_name;
-        document.querySelector("#semiunit").value = data[0].semi_good_unit;
+        document.querySelector("#semiid").value = data[0][0].semi_good_id;
+        document.querySelector("#seminame").value = data[0][0].semi_good_name;
+
+        const semiunit = document.querySelector("#semiunit");
+        for (var k = 0; k < data[1].length; k++) {
+          semiunit.options.add(
+            new Option(data[1][k].unit_details, data[1][k].unit_name)
+          );
+        }
+        document.querySelector("#semiunit").value = data[0][0].semi_good_unit;
       });
 
       function submitForm(e) {

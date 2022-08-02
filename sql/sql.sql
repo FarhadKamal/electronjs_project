@@ -101,7 +101,7 @@ CREATE TABLE `package_list` (
   `package_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`package_id`),
   UNIQUE KEY `raw_material_name` (`package_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `package_list` */
 
@@ -130,11 +130,9 @@ CREATE TABLE `raw_material_list` (
   `raw_mat_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`raw_mat_id`),
   UNIQUE KEY `raw_material_name` (`raw_mat_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `raw_material_list` */
-
-insert  into `raw_material_list`(`raw_mat_id`,`raw_mat_name`,`raw_mat_unit`) values (3,'mango','kg');
 
 /*Table structure for table `raw_material_stock` */
 
@@ -177,7 +175,7 @@ CREATE TABLE `semi_good_list` (
   `semi_good_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`semi_good_id`),
   UNIQUE KEY `raw_material_name` (`semi_good_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `semi_good_list` */
 
@@ -231,6 +229,22 @@ CREATE TABLE `semi_good_stock` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `semi_good_stock` */
+
+/*Table structure for table `unit_list` */
+
+CREATE TABLE `unit_list` (
+  `unit_name` varchar(10) NOT NULL,
+  `unit_details` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`unit_name`),
+  UNIQUE KEY `raw_material_name` (`unit_details`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `unit_list` */
+
+insert  into `unit_list`(`unit_name`,`unit_details`) values ('gm','gm (gram)');
+insert  into `unit_list`(`unit_name`,`unit_details`) values ('kg','kg (kilogram)');
+insert  into `unit_list`(`unit_name`,`unit_details`) values ('m','m (metre)');
+insert  into `unit_list`(`unit_name`,`unit_details`) values ('sq. ft.','square foot');
 
 /*Table structure for table `users` */
 

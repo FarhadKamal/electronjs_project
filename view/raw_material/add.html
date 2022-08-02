@@ -30,8 +30,7 @@
 
         <div class="form-outline mb-4">
           <select id="mtunit" class="form-select">
-            <option value="kg">kg (kilogram)</option>
-            <option value="m">m (metre)</option>
+            <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
         </div>
@@ -55,6 +54,24 @@
 
       listLink.addEventListener("click", function (event) {
         ipcRenderer.send("raw:material:list:click", "clicked");
+      });
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("raw:material:add:loaded", "loaded");
+        },
+        false
+      );
+
+      ipcRenderer.on("raw:material:add:fetched", function (e, data) {
+        const mtunit = document.querySelector("#mtunit");
+        console.log(data)
+        for (var k = 0; k < data.length; k++) {
+          mtunit.options.add(
+            new Option(data[k].unit_details, data[k].unit_name)
+          );
+        }
       });
 
       function submitForm(e) {

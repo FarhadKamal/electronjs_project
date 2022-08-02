@@ -4,7 +4,8 @@ const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
 const { createSemiGoodWindow } = require("./controller/semi_good");
-
+const { createPackageWindow } = require("./controller/package");
+const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
 const { createLoginWindow } = require("./controller/login");
 
@@ -36,8 +37,15 @@ const mainMenuTemplate = [
     ],
   },
   {
-    label: "Items",
+    label: "Settings",
     submenu: [
+      {
+        label: "Unit",
+
+        click() {
+          createUnitWindow();
+        },
+      },
       {
         label: "Raw Material",
 
@@ -50,6 +58,13 @@ const mainMenuTemplate = [
 
         click() {
           createSemiGoodWindow()      
+        },
+      },
+      {
+        label: "Package",
+
+        click() {
+          createPackageWindow()      
         },
       },
     ],

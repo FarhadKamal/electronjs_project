@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Semi Good</title>
+    <title>Package</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -24,16 +24,16 @@
         <div class="form-outline mb-4">
           <input
             type="text"
-            id="seminame"
+            id="packname"
             autofocus
             class="form-control"
             required
           />
-          <label class="form-label">Semi Good Name</label>
+          <label class="form-label">Package Name</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="semiunit" class="form-select">
+          <select id="packunit" class="form-select">
             <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
@@ -57,21 +57,21 @@
       const listLink = document.querySelector("#btn-list");
 
       listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("semi:good:list:click", "clicked");
+        ipcRenderer.send("pack:list:click", "clicked");
       });
 
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("semi:good:add:loaded", "loaded");
+          ipcRenderer.send("pack:add:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("semi:good:add:fetched", function (e, data) {
-        const semiunit = document.querySelector("#semiunit");
+      ipcRenderer.on("pack:add:fetched", function (e, data) {
+        const packunit = document.querySelector("#packunit");
         for (var k = 0; k < data.length; k++) {
-          semiunit.options.add(
+          packunit.options.add(
             new Option(data[k].unit_details, data[k].unit_name)
           );
         }
@@ -80,16 +80,16 @@
       function submitForm(e) {
         e.preventDefault();
 
-        const seminame = document.querySelector("#seminame").value;
-        const semiunit = document.querySelector("#semiunit").value;
-        ipcRenderer.send("semi:good:add:submit", [seminame, semiunit]);
+        const packname = document.querySelector("#packname").value;
+        const packunit = document.querySelector("#packunit").value;
+        ipcRenderer.send("pack:add:submit", [packname, packunit]);
 
-        ipcRenderer.on("semi:good:add:reply", function (e, reply) {
+        ipcRenderer.on("pack:add:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
 
-            document.querySelector("#seminame").value = "";
+            document.querySelector("#packname").value = "";
 
             document.querySelector("#msg").textContent = "Added Successfully!";
           } else {

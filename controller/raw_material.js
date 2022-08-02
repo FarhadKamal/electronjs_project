@@ -3,6 +3,7 @@ const { ipcMain, BrowserWindow, dialog } = require("electron");
 const { getConnectionString, dblost } = require("../db");
 let subWindow = null;
 let trackData;
+let trackUnitData;
 
 const createRawMaterialWindow = () => {
   if (!subWindow) {
@@ -49,8 +50,12 @@ ipcMain.on("raw:material:edit:request", function (e, id) {
   });
 });
 
+ipcMain.on("raw:material:add:loaded", function (e, id) {
+  e.reply("raw:material:add:fetched", trackUnitData);
+});
+
 ipcMain.on("raw:material:edit:loaded", function (e, id) {
-  e.reply("raw:material:edit:fetched", trackData);
+  e.reply("raw:material:edit:fetched", [trackData,trackUnitData]);
 });
 
 ipcMain.on("raw:material:add:submit", function (e, item) {
@@ -107,6 +112,9 @@ ipcMain.on("raw:material:list:loaded", function (e, item) {
     });
 
     e.reply("raw:material:list:table", html);
+  });
+  get_units(function (rows) {
+    trackUnitData = rows;
   });
 });
 
@@ -298,6 +306,38 @@ function get_by_id(id, callback) {
       return;
     }
 
+    callback(rows);
+  });
+
+  // Close the connection
+  connection.end(function () {
+    // The connection has been closed
+  });
+}
+
+function get_units(callback) {
+  const connection = mysql.createConnection(getConnectionString());
+
+  // connect to mysql
+  connection.connect(function (err) {
+    // in case of error
+    if (err) {
+      console.log(err.code);
+      console.log(err.fatal);
+
+      dblost();
+    }
+  });
+
+  // Perform a query
+  query = "select * from unit_list order by unit_name";
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) {
+      console.log("An error ocurred performing the query.");
+      console.log(err);
+      return;
+    }
     callback(rows);
   });
 

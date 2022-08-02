@@ -5,7 +5,7 @@ let subWindow = null;
 let trackData;
 let trackUnitData;
 
-const createSemiGoodWindow = () => {
+const createPackageWindow = () => {
   if (!subWindow) {
     subWindow = new BrowserWindow({
       width: 1200,
@@ -18,7 +18,7 @@ const createSemiGoodWindow = () => {
       },
     });
 
-    subWindow.loadFile("view/semi_good/list.html");
+    subWindow.loadFile("view/package/list.html");
 
     subWindow.on("closed", function () {
       subWindow = null;
@@ -28,7 +28,7 @@ const createSemiGoodWindow = () => {
   }
 };
 
-ipcMain.on("semi:good:delete:request", function (e, id) {
+ipcMain.on("pack:delete:request", function (e, id) {
   let response = dialog.showMessageBoxSync(subWindow, {
     type: "question",
     buttons: ["Yes", "No"],
@@ -37,48 +37,48 @@ ipcMain.on("semi:good:delete:request", function (e, id) {
   });
   if (response == 0) {
     deleteQuery(id, function (reply) {
-      if (reply == "success") subWindow.loadFile("view/semi_good/list.html");
-      else e.reply("semi:good:list:deleted", reply);
+      if (reply == "success") subWindow.loadFile("view/package/list.html");
+      else e.reply("pack:list:deleted", reply);
     });
   }
 });
 
-ipcMain.on("semi:good:edit:request", function (e, id) {
+ipcMain.on("pack:edit:request", function (e, id) {
   get_by_id(id, function (row) {
     trackData = row;
-    subWindow.loadFile("view/semi_good/edit.html");
+    subWindow.loadFile("view/package/edit.html");
   });
 });
 
-ipcMain.on("semi:good:add:loaded", function (e, id) {
-  e.reply("semi:good:add:fetched", trackUnitData);
+ipcMain.on("pack:add:loaded", function (e, id) {
+  e.reply("pack:add:fetched", trackUnitData);
 });
 
-ipcMain.on("semi:good:edit:loaded", function (e, id) {
-  e.reply("semi:good:edit:fetched", [trackData, trackUnitData]);
+ipcMain.on("pack:edit:loaded", function (e, id) {
+  e.reply("pack:edit:fetched", [trackData, trackUnitData]);
 });
 
-ipcMain.on("semi:good:add:submit", function (e, item) {
+ipcMain.on("pack:add:submit", function (e, item) {
   insert(item, function (reply) {
-    e.reply("semi:good:add:reply", reply);
+    e.reply("pack:add:reply", reply);
   });
 });
 
-ipcMain.on("semi:good:edit:submit", function (e, item) {
+ipcMain.on("pack:edit:submit", function (e, item) {
   update(item, function (reply) {
-    e.reply("semi:good:edit:reply", reply);
+    e.reply("pack:edit:reply", reply);
   });
 });
 
-ipcMain.on("semi:good:add:click", function (e, item) {
-  subWindow.loadFile("view/semi_good/add.html");
+ipcMain.on("pack:add:click", function (e, item) {
+  subWindow.loadFile("view/package/add.html");
 });
 
-ipcMain.on("semi:good:list:click", function (e, item) {
-  subWindow.loadFile("view/semi_good/list.html");
+ipcMain.on("pack:list:click", function (e, item) {
+  subWindow.loadFile("view/package/list.html");
 });
 
-ipcMain.on("semi:good:list:loaded", function (e, item) {
+ipcMain.on("pack:list:loaded", function (e, item) {
   let html = "";
 
   get_list(function (rows) {
@@ -89,21 +89,21 @@ ipcMain.on("semi:good:list:loaded", function (e, item) {
       html += sl;
       html += "</td>";
       html += "<td>";
-      html += row.semi_good_name;
+      html += row.package_name;
       html += "</td>";
       html += "<td>";
-      html += row.semi_good_unit;
+      html += row.package_unit;
       html += "</td>";
 
       html += "<td>";
       html +=
         '<button type="button" class="btn btn-danger btn-sm rounded-0" onClick="deleteMe(\'' +
-        row.semi_good_id +
+        row.package_id +
         "')\" ><i class='material-icons'>&#xE872;</i></button> &nbsp;";
 
       html +=
         '<button type="button" class="btn btn-success btn-sm rounded-0" onClick="editMe(\'' +
-        row.semi_good_id +
+        row.package_id +
         "')\" ><i class='material-icons'>&#xE254;</i></button>";
       html += "</td>";
 
@@ -111,7 +111,7 @@ ipcMain.on("semi:good:list:loaded", function (e, item) {
       sl++;
     });
 
-    e.reply("semi:good:list:table", html);
+    e.reply("pack:list:table", html);
   });
   get_units(function (rows) {
     trackUnitData = rows;
@@ -134,14 +134,14 @@ function insert(item, callback) {
 
   //data cleaning
 
-  let seminame = item[0].replace(/['"]+/g, "");
+  let packname = item[0].replace(/['"]+/g, "");
 
   // Perform a query
 
   query =
-    "INSERT INTO semi_good_list (semi_good_name, semi_good_unit) VALUES \
+    "INSERT INTO package_list (package_name, package_unit) VALUES \
    ('" +
-    seminame +
+    packname +
     "', '" +
     item[1] +
     "')";
@@ -179,21 +179,21 @@ function update(item, callback) {
 
   //data cleaning
 
-  let matname = item[1].replace(/['"]+/g, "");
+  let packname = item[1].replace(/['"]+/g, "");
 
   // Perform a query
 
   query =
-    "update  semi_good_list \
+    "update  package_list \
     set \
-    semi_good_name = '" +
-    matname +
+    package_name = '" +
+    packname +
     "' , \
-    semi_good_unit = '" +
+    package_unit = '" +
     item[2] +
     "'\
     where\
-    semi_good_id = '" +
+    package_id = '" +
     item[0] +
     "' ";
 
@@ -230,7 +230,7 @@ function deleteQuery(id, callback) {
 
   // Perform a query
 
-  query = "delete from semi_good_list where semi_good_id=" + id;
+  query = "delete from package_list where package_id=" + id;
 
   connection.query(query, function (err, result) {
     if (err) {
@@ -264,7 +264,7 @@ function get_list(callback) {
   });
 
   // Perform a query
-  query = "select * from semi_good_list order by semi_good_name";
+  query = "select * from package_list order by package_name";
 
   connection.query(query, function (err, rows, fields) {
     if (err) {
@@ -297,7 +297,7 @@ function get_by_id(id, callback) {
   });
 
   // Perform a query
-  query = "select * from semi_good_list where semi_good_id=" + id;
+  query = "select * from package_list where package_id=" + id;
 
   connection.query(query, function (err, rows, fields) {
     if (err) {
@@ -346,4 +346,4 @@ function get_units(callback) {
   });
 }
 
-module.exports = { createSemiGoodWindow };
+module.exports = { createPackageWindow };
