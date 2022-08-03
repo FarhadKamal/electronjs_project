@@ -7,7 +7,7 @@ const { createSemiGoodWindow } = require("./controller/semi_good");
 const { createPackageWindow } = require("./controller/package");
 const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
-const { createLoginWindow } = require("./controller/login");
+const { createLoginWindow, changePasswordWindow } = require("./controller/login");
 
 // development or production
 process.env.NODE_ENV = "development";
@@ -20,6 +20,15 @@ const mainMenuTemplate = [
   {
     label: "Profile",
     submenu: [
+      
+      {
+        label: "change password",
+
+        click() {
+          changePasswordWindow();
+        },
+      },
+      
       {
         label: "logout",
 

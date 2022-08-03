@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+
+    <title>Password Change</title>
+  </head>
+  <body>
+    <div class="alert alert-warning" id="msg" role="alert"></div>
+    <div class="container">
+      <h3 class="pb-3">Password Change</h3>
+      <div class="form-style">
+        <form>
+          <div class="form-group pb-3">
+            <input
+              type="text"
+              placeholder="Username"
+              class="form-control"
+              id="user"
+              readonly
+            />
+          </div>
+          <div class="form-group pb-3">
+            <input
+              type="password"
+              placeholder="Current Password"
+              class="form-control"
+              id="passwordOld"
+              minlength="3"
+              required
+            />
+          </div>
+          <div class="form-group pb-3">
+            <input
+              type="password"
+              placeholder="New Password"
+              class="form-control"
+              id="passwordNew"
+              minlength="3"
+              required
+            />
+          </div>
+          <div class="form-group pb-3">
+            <input
+              type="password"
+              placeholder="Retype New Password"
+              class="form-control"
+              id="passwordRe"
+              required
+              minlength="3"
+            />
+          </div>
+          <div class="pb-2">
+            <button
+              type="submit"
+              id="btn-submit"
+              class="btn btn-dark w-100 font-weight-bold mt-2"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+      const form = document.querySelector("form");
+      form.addEventListener("submit", submitForm);
+
+      document.querySelector("#msg").style.visibility = "hidden";
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("login:change:loaded", "loaded");
+        },
+        false
+      );
+
+      ipcRenderer.on("login:change:fetched", function (e, data) {
+        const packunit = document.querySelector("#packunit");
+        document.querySelector("#user").value = data;
+      });
+
+      function submitForm(e) {
+        e.preventDefault();
+        const user = document.querySelector("#user").value;
+        const passwordOld = document.querySelector("#passwordOld").value;
+        const passwordNew = document.querySelector("#passwordNew").value;
+        const passwordRe = document.querySelector("#passwordRe").value;
+
+        if (passwordNew != passwordRe) {
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-danger";
+          document.querySelector("#msg").textContent =
+            "Retype password not matching";
+        }
+        else if (passwordNew == passwordOld) {
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-danger";
+          document.querySelector("#msg").textContent =
+            "Old and New Password cannot be same!";
+        }
+        else {
+          ipcRenderer.send("login:change:submit", [user, passwordOld]);
+        }
+
+        ipcRenderer.on("login:change:incorrect", function (e, reply) {
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-danger";
+          document.querySelector("#msg").textContent = "Incorrect old passrod!";
+        });
+
+        ipcRenderer.on("login:change:final:success", function (e, reply) {
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-info";
+          document.querySelector("#msg").textContent = "Password changed successfully!";
+          document.querySelector("#btn-submit").disabled=true
+        });
+
+        ipcRenderer.on("login:change:final", function (e, reply) {
+          ipcRenderer.send("login:change:final:submit",  [user, passwordNew]);         
+        });
+
+        ipcRenderer.on("login:change:incorrect", function (e, reply) {
+          document.querySelector("#msg").style.visibility = "visible";
+          document.querySelector("#msg").className = "alert alert-danger";
+          document.querySelector("#msg").textContent = "Incorrect old passrod!";
+        });
+      }
+    </script>
+  </body>
+</html>
