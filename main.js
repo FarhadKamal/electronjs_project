@@ -4,6 +4,7 @@ const path = require("path");
 
 const { createRawMaterialWindow } = require("./controller/raw_material");
 const { createSemiGoodWindow } = require("./controller/semi_good");
+const { createFinishedGoodWindow } = require("./controller/finished_good");
 const { createPackageWindow } = require("./controller/package");
 const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
@@ -74,6 +75,13 @@ const mainMenuTemplate = [
 
         click() {
           createPackageWindow()      
+        },
+      },
+      {
+        label: "Finished Good",
+
+        click() {
+          createFinishedGoodWindow()      
         },
       },
     ],

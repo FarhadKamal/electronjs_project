@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../css/custom-style.css" />
+    <link rel="stylesheet" href="../../css/font-awesome.min.css" />
+
+    <title>Finished Good List</title>
+  </head>
+  <body>
+    <div class="alert alert-dark" id="msg" role="alert"></div>
+
+    <div class="container">
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-6">
+              <h2>Add <b>Finished Good</b></h2>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" id="btn-add" class="btn btn-success">
+                <i class="material-icons">&#xE147;</i> <span>Add New</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <table class="table table-bordered" id="good-tab" style="width: 100%">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col" width="10%">SL#</th>
+              <th scope="col" width="60%">Name</th>
+              <th scope="col" width="60%">Semi Tag</th>
+              <th scope="col" width="10%">Unit</th>
+              <th scope="col" width="20%">Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+      document.querySelector("#msg").style.visibility = "hidden";
+      const addLink = document.querySelector("#btn-add");
+
+      addLink.addEventListener("click", function (event) {
+        ipcRenderer.send("finished:good:add:click", "clicked");
+      });
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("finished:good:list:loaded", "loaded");
+        },
+        false
+      );
+
+      ipcRenderer.on("finished:good:list:table", function (e, item) {
+        document.querySelector("#good-tab > tbody").innerHTML = item;
+      });
+
+      function deleteMe(id) {
+        ipcRenderer.send("finished:good:delete:request", id);
+      }
+      function editMe(id) {
+        ipcRenderer.send("finished:good:edit:request", id);
+      }
+      ipcRenderer.on("finished:good:list:deleted", function (e, reply) {
+        document.querySelector("#msg").style.visibility = "visible";
+        document.querySelector("#msg").className = "alert alert-danger";
+        document.querySelector("#msg").textContent = reply;
+      });
+    </script>
+  </body>
+</html>

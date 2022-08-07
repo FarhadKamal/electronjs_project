@@ -38,9 +38,13 @@ CREATE TABLE `finished_good_list` (
   UNIQUE KEY `raw_material_name` (`finished_good_name`),
   KEY `FK_finished_good_list` (`semi_good_id`),
   CONSTRAINT `FK_finished_good_list` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `finished_good_list` */
+
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (3,8,'r2','gm');
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (4,7,'r3','sq. ft.');
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (5,7,'333','m');
 
 /*Table structure for table `finished_good_planning` */
 
@@ -130,9 +134,11 @@ CREATE TABLE `raw_material_list` (
   `raw_mat_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`raw_mat_id`),
   UNIQUE KEY `raw_material_name` (`raw_mat_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `raw_material_list` */
+
+insert  into `raw_material_list`(`raw_mat_id`,`raw_mat_name`,`raw_mat_unit`) values (12,'wood','sq. ft.');
 
 /*Table structure for table `raw_material_stock` */
 
@@ -175,9 +181,12 @@ CREATE TABLE `semi_good_list` (
   `semi_good_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`semi_good_id`),
   UNIQUE KEY `raw_material_name` (`semi_good_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `semi_good_list` */
+
+insert  into `semi_good_list`(`semi_good_id`,`semi_good_name`,`semi_good_unit`) values (7,'wood','gm');
+insert  into `semi_good_list`(`semi_good_id`,`semi_good_name`,`semi_good_unit`) values (8,'steel','gm');
 
 /*Table structure for table `semi_good_planning` */
 
