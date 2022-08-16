@@ -5,6 +5,7 @@ let subWindow = null;
 let trackData;
 let trackUnitData;
 let trackSemiData;
+let trackPackData;
 
 const createFinishedGoodWindow = () => {
   if (!subWindow) {
@@ -53,11 +54,12 @@ ipcMain.on("finished:good:edit:request", function (e, id) {
 });
 
 ipcMain.on("finished:good:add:loaded", function (e, id) {
-  e.reply("finished:good:add:fetched", [trackUnitData, trackSemiData]);
+  
+  e.reply("finished:good:add:fetched", [trackUnitData, trackSemiData,trackPackData]);
 });
 
 ipcMain.on("finished:good:edit:loaded", function (e, id) {
-  e.reply("finished:good:edit:fetched", [trackData, trackUnitData,trackSemiData]);
+  e.reply("finished:good:edit:fetched", [trackData, trackUnitData,trackSemiData,trackPackData]);
 });
 
 ipcMain.on("finished:good:add:submit", function (e, item) {
@@ -97,6 +99,9 @@ ipcMain.on("finished:good:list:loaded", function (e, item) {
       html += row.semi_good_name;
       html += "</td>";
       html += "<td>";
+      html += row.package_name;
+      html += "</td>";
+      html += "<td>";
       html += row.finished_good_unit;
       html += "</td>";
 
@@ -124,6 +129,9 @@ ipcMain.on("finished:good:list:loaded", function (e, item) {
   get_semi_goods(function (rows) {
     trackSemiData = rows;
   });
+  get_pack_list(function (rows) {
+    trackPackData = rows;
+  });
 });
 
 function insert(item, callback) {
@@ -147,13 +155,15 @@ function insert(item, callback) {
   // Perform a query
 
   query =
-    "INSERT INTO finished_good_list (finished_good_name,semi_good_id ,finished_good_unit) VALUES \
+    "INSERT INTO finished_good_list (finished_good_name,semi_good_id ,finished_good_unit,package_id) VALUES \
    ('" +
     finishedname +
     "', '" +
     item[1] +
     "', '" +
     item[2] +
+    "', '" +
+    item[3] +
     "')";
 
   connection.query(query, function (err, result) {
@@ -203,7 +213,10 @@ function update(item, callback) {
     item[2] +
     "',\
     finished_good_unit = '" +
-    item[3] + "'\
+    item[3] + 
+    "',\
+    package_id = '" +
+    item[4] + "'\
      where finished_good_id = '" +
     item[0] +
     "' ";
@@ -278,8 +291,9 @@ function get_list(callback) {
 
   // Perform a query
   query =
-    "select finished_good_list.*,semi_good_name from finished_good_list inner \
+    "select finished_good_list.*,semi_good_name,package_name from finished_good_list inner \
      join semi_good_list on semi_good_list.semi_good_id=finished_good_list.semi_good_id \
+     join package_list on package_list.package_id=finished_good_list.package_id \
       order by finished_good_name";
 
   connection.query(query, function (err, rows, fields) {
@@ -378,6 +392,38 @@ function get_semi_goods(callback) {
 
   // Perform a query
   query = "select * from semi_good_list order by semi_good_name";
+
+  connection.query(query, function (err, rows, fields) {
+    if (err) {
+      console.log("An error ocurred performing the query.");
+      console.log(err);
+      return;
+    }
+    callback(rows);
+  });
+
+  // Close the connection
+  connection.end(function () {
+    // The connection has been closed
+  });
+}
+
+function get_pack_list(callback) {
+  const connection = mysql.createConnection(getConnectionString());
+
+  // connect to mysql
+  connection.connect(function (err) {
+    // in case of error
+    if (err) {
+      console.log(err.code);
+      console.log(err.fatal);
+
+      dblost();
+    }
+  });
+
+  // Perform a query
+  query = "select * from package_list order by package_name";
 
   connection.query(query, function (err, rows, fields) {
     if (err) {

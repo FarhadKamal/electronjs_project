@@ -42,6 +42,13 @@
         </div>
 
         <div class="form-outline mb-4">
+          <select id="packlist" class="form-select">
+            <!-- empty -->
+          </select>
+          <label class="form-label">Package</label>
+        </div>
+
+        <div class="form-outline mb-4">
           <select id="finishedunit" class="form-select">
             <!-- empty -->
           </select>
@@ -99,8 +106,15 @@
             new Option(data[2][k].semi_good_name, data[2][k].semi_good_id)
           );
         }
-        console.log(data[2])
         document.querySelector("#semilist").value = data[0][0].semi_good_id;
+
+        const packlist = document.querySelector("#packlist");
+        for (var k = 0; k < data[2].length; k++) {
+          packlist.options.add(
+            new Option(data[3][k].package_name, data[3][k].package_id)
+          );
+        }
+        document.querySelector("#packlist").value = data[0][0].package_id;
       });
 
       function submitForm(e) {
@@ -109,11 +123,13 @@
         const finishedunit = document.querySelector("#finishedunit").value;
         const finishedid = document.querySelector("#finishedid").value;
         const seminame = document.querySelector("#semilist").value;
+        const packname = document.querySelector("#packlist").value;
         ipcRenderer.send("finished:good:edit:submit", [
           finishedid,
           finishedname,
           seminame,
           finishedunit,
+          packname,
         ]);
 
         ipcRenderer.on("finished:good:edit:reply", function (e, reply) {

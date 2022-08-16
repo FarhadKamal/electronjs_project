@@ -11,22 +11,6 @@ MySQL - 5.5.5-10.4.21-MariaDB : Database - wood
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
-/*Table structure for table `finished_good_components` */
-
-CREATE TABLE `finished_good_components` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `finished_good_id` int(11) DEFAULT NULL,
-  `package_id` int(11) DEFAULT NULL,
-  `qty` double(18,2) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_finished_good_components` (`package_id`),
-  KEY `FK_finished_good_components2` (`finished_good_id`),
-  CONSTRAINT `FK_finished_good_components` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`),
-  CONSTRAINT `FK_finished_good_components2` FOREIGN KEY (`finished_good_id`) REFERENCES `finished_good_list` (`finished_good_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-/*Data for the table `finished_good_components` */
-
 /*Table structure for table `finished_good_list` */
 
 CREATE TABLE `finished_good_list` (
@@ -34,17 +18,18 @@ CREATE TABLE `finished_good_list` (
   `semi_good_id` int(11) DEFAULT NULL,
   `finished_good_name` varchar(255) DEFAULT NULL,
   `finished_good_unit` varchar(50) DEFAULT NULL,
+  `package_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`finished_good_id`),
   UNIQUE KEY `raw_material_name` (`finished_good_name`),
   KEY `FK_finished_good_list` (`semi_good_id`),
-  CONSTRAINT `FK_finished_good_list` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+  KEY `FK_package` (`package_id`),
+  CONSTRAINT `FK_finished_good_list` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`),
+  CONSTRAINT `FK_package` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `finished_good_list` */
 
-insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (3,8,'r2','gm');
-insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (4,7,'r3','sq. ft.');
-insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`) values (5,7,'333','m');
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`,`package_id`) values (2,8,'fw','kg',8);
 
 /*Table structure for table `finished_good_planning` */
 
@@ -105,9 +90,12 @@ CREATE TABLE `package_list` (
   `package_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`package_id`),
   UNIQUE KEY `raw_material_name` (`package_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `package_list` */
+
+insert  into `package_list`(`package_id`,`package_name`,`package_unit`) values (7,'box','gm');
+insert  into `package_list`(`package_id`,`package_name`,`package_unit`) values (8,'giftbox','m');
 
 /*Table structure for table `package_stock` */
 
