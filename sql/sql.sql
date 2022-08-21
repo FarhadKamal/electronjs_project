@@ -21,15 +21,17 @@ CREATE TABLE `finished_good_list` (
   `package_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`finished_good_id`),
   UNIQUE KEY `raw_material_name` (`finished_good_name`),
-  KEY `FK_finished_good_list` (`semi_good_id`),
   KEY `FK_package` (`package_id`),
+  KEY `FK_finished_good_list` (`semi_good_id`),
   CONSTRAINT `FK_finished_good_list` FOREIGN KEY (`semi_good_id`) REFERENCES `semi_good_list` (`semi_good_id`),
   CONSTRAINT `FK_package` FOREIGN KEY (`package_id`) REFERENCES `package_list` (`package_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `finished_good_list` */
 
 insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`,`package_id`) values (2,8,'fw','kg',8);
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`,`package_id`) values (3,7,'test','m',7);
+insert  into `finished_good_list`(`finished_good_id`,`semi_good_id`,`finished_good_name`,`finished_good_unit`,`package_id`) values (6,8,'test2','gm',7);
 
 /*Table structure for table `finished_good_planning` */
 
@@ -122,11 +124,12 @@ CREATE TABLE `raw_material_list` (
   `raw_mat_unit` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`raw_mat_id`),
   UNIQUE KEY `raw_material_name` (`raw_mat_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `raw_material_list` */
 
 insert  into `raw_material_list`(`raw_mat_id`,`raw_mat_name`,`raw_mat_unit`) values (12,'wood','sq. ft.');
+insert  into `raw_material_list`(`raw_mat_id`,`raw_mat_name`,`raw_mat_unit`) values (14,'shegun wood','sq. ft.');
 
 /*Table structure for table `raw_material_stock` */
 
@@ -141,9 +144,13 @@ CREATE TABLE `raw_material_stock` (
   PRIMARY KEY (`id`),
   KEY `FK_aa` (`raw_mat_id`),
   CONSTRAINT `FK_raw_material_stock` FOREIGN KEY (`raw_mat_id`) REFERENCES `raw_material_list` (`raw_mat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `raw_material_stock` */
+
+insert  into `raw_material_stock`(`id`,`stock_date`,`stock_type`,`ref_no`,`ref_source`,`raw_mat_id`,`stock_qty`) values (1,'2022-08-17 14:54:18',NULL,NULL,NULL,12,3.00);
+insert  into `raw_material_stock`(`id`,`stock_date`,`stock_type`,`ref_no`,`ref_source`,`raw_mat_id`,`stock_qty`) values (3,'2022-08-17 15:11:09','received',NULL,'GRN',14,2.00);
+insert  into `raw_material_stock`(`id`,`stock_date`,`stock_type`,`ref_no`,`ref_source`,`raw_mat_id`,`stock_qty`) values (4,'2022-08-17 15:11:16','received',NULL,'GRN',12,4.00);
 
 /*Table structure for table `semi_good_components` */
 

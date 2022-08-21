@@ -8,6 +8,7 @@ const { createFinishedGoodWindow } = require("./controller/finished_good");
 const { createPackageWindow } = require("./controller/package");
 const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
+const { createRawMatStockRcvWindow } = require("./controller/raw_material_rcv");
 const { createLoginWindow, changePasswordWindow } = require("./controller/login");
 
 // development or production
@@ -84,6 +85,20 @@ const mainMenuTemplate = [
           createFinishedGoodWindow()      
         },
       },
+    ],
+  },
+
+  {
+    label: "Receive",
+    submenu: [
+
+      {
+        label: "Receive Raw Material",
+
+        click() {
+          createRawMatStockRcvWindow();
+        },
+      },    
     ],
   },
 ];

@@ -6,42 +6,29 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Raw Material</title>
+    <title>Receive Raw Material</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
 
     <div class="container">
-      <button
-        type="button"
-        id="btn-list"
-        class="btn btn-secondary btn-block mb-4"
-      >
-        back to list
-      </button>
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
-          <input
-            type="text"
-            id="mtname"
-            autofocus
-            class="form-control"
-            required
-          />
-          <label class="form-label">Raw Material Name</label>
+          <select id="mtname" required class="form-select">
+            <!-- empty -->
+          </select>
+          <label class="form-label">Raw Material</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="mtunit" class="form-select">
-            <!-- empty -->
-          </select>
-          <label class="form-label">Unit</label>
+          <input type="number" id="mtqty" class="form-control" required />
+          <label class="form-label">Qty</label>
         </div>
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary btn-block mb-4">
-          Add
+          add to Stock
         </button>
       </form>
     </div>
@@ -54,25 +41,20 @@
 
       document.querySelector("#msg").style.visibility = "hidden";
 
-      const listLink = document.querySelector("#btn-list");
-
-      listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("raw:material:list:click", "clicked");
-      });
-
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("raw:material:add:loaded", "loaded");
+          ipcRenderer.send("raw:material:rcv:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("raw:material:add:fetched", function (e, data) {
-        const mtunit = document.querySelector("#mtunit");
+      ipcRenderer.on("raw:material:rcv:fetched", function (e, data) {
+        const mtname = document.querySelector("#mtname");
+
         for (var k = 0; k < data.length; k++) {
-          mtunit.options.add(
-            new Option(data[k].unit_details, data[k].unit_name)
+          mtname.options.add(
+            new Option(data[k].raw_mat_name, data[k].raw_mat_id)
           );
         }
       });
@@ -81,17 +63,19 @@
         e.preventDefault();
 
         const mtname = document.querySelector("#mtname").value;
-        const mtunit = document.querySelector("#mtunit").value;
-        ipcRenderer.send("raw:material:add:submit", [mtname, mtunit]);
+        const mtqty = document.querySelector("#mtqty").value;
 
-        ipcRenderer.on("raw:material:add:reply", function (e, reply) {
+        ipcRenderer.send("raw:material:rcv:submit", [mtname, mtqty]);
+
+        ipcRenderer.on("raw:material:rcv:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
 
             document.querySelector("#mtname").value = "";
-
-            document.querySelector("#msg").textContent = "Added Successfully!";
+            document.querySelector("#mtqty").value = "";
+            document.querySelector("#msg").textContent =
+              "Stock Added Successfully!";
           } else {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-danger";
