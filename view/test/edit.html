@@ -22,6 +22,7 @@
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
+          <input type="hidden" id="semiid" class="form-control" />
           <input
             type="text"
             id="seminame"
@@ -29,6 +30,7 @@
             class="form-control"
             required
           />
+
           <label class="form-label">Semi Good Name</label>
         </div>
 
@@ -40,39 +42,30 @@
         </div>
 
         <div class="form-outline mb-4">
-          <select
-            name="test[]"
-            id="test"
-            multiple
-            multiselect-search="true"
-            multiselect-select-all="true"
-            multiselect-max-items="3"
-            multiselect-hide-x="false"
-            multiselect-placeholder="Click to select an option..."
-            style="width: 50%"
-          >
-            <option value="A" selected>A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D" selected>D</option>
-            <option value="E">E</option>
-            <option value="F">F</option>
-            <option value="G">G</option>
+          <select id="rawMaterial" class="form-select">
+            <!-- empty -->
           </select>
+          <label class="form-label">Raw Material</label>
         </div>
+
+
+
+        </div>
+
+        
 
         <!-- Submit button -->
         <button type="submit" class="btn btn-primary btn-block mb-4">
-          Add
+          Update
         </button>
       </form>
     </div>
 
-    <script src="../../assets/multiselect-dropdown/multiselect-dropdown.js"></script>
     <script>
       const electron = require("electron");
       const { ipcRenderer } = electron;
       const form = document.querySelector("form");
+
       form.addEventListener("submit", submitForm);
 
       document.querySelector("#msg").style.visibility = "hidden";
@@ -86,47 +79,47 @@
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("semi:good:add:loaded", "loaded");
+          ipcRenderer.send("semi:good:edit:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("semi:good:add:fetched", function (e, data) {
+      ipcRenderer.on("semi:good:edit:fetched", function (e, data) {
+        document.querySelector("#semiid").value = data[0][0].semi_good_id;
+        document.querySelector("#seminame").value = data[0][0].semi_good_name;
+        
         const semiunit = document.querySelector("#semiunit");
-        for (var k = 0; k < data.length; k++) {
+        const rawMaterial = document.querySelector("#rawMaterial");
+
+        console.log(data);
+        
+        for (var k = 0; k < data[1].length; k++) {
           semiunit.options.add(
-            new Option(data[k].unit_details, data[k].unit_name)
+            new Option(data[1][k].unit_details, data[1][k].unit_name)
           );
         }
+
+        for (var k = 0; k < data[2].length; k++) {
+          rawMaterial.options.add(
+            new Option(data[2][k].raw_mat_name, data[2][k].raw_mat_id)
+          );
+        }
+        document.querySelector("#semiunit").value = data[0][0].semi_good_unit;
+        document.querySelector("#rawMaterial").value = data[2][0].raw_mat_name;
       });
 
       function submitForm(e) {
         e.preventDefault();
-
         const seminame = document.querySelector("#seminame").value;
         const semiunit = document.querySelector("#semiunit").value;
-        // const test = document.querySelector("#test").value;
-        var selected = [];
-        for (var option of document.getElementById("test").options) {
-          if (option.selected) {
-            selected.push(option.value);
-          }
-        }
-        // console.log(selected);
-        ipcRenderer.send("semi:good:add:submit", [
-          seminame,
-          semiunit,
-          selected,
-        ]);
+        const semiid = document.querySelector("#semiid").value;
+        ipcRenderer.send("semi:good:edit:submit", [semiid, seminame, semiunit]);
 
-        ipcRenderer.on("semi:good:add:reply", function (e, reply) {
+        ipcRenderer.on("semi:good:edit:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
-
-            document.querySelector("#seminame").value = "";
-
-            document.querySelector("#msg").textContent = "Added Successfully!";
+            document.querySelector("#msg").textContent = "Edited Successfully!";
           } else {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-danger";

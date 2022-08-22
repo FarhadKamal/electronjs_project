@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Semi Good</title>
+    <title>Test</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -17,48 +17,26 @@
         id="btn-list"
         class="btn btn-secondary btn-block mb-4"
       >
-        back to list
+        back to Test List
       </button>
       <form>
         <!-- Email input -->
         <div class="form-outline mb-4">
           <input
             type="text"
-            id="seminame"
+            id="testName"
             autofocus
             class="form-control"
             required
           />
-          <label class="form-label">Semi Good Name</label>
+          <label class="form-label">Test Name</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="semiunit" class="form-select">
+          <select id="testUnit" class="form-select">
             <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
-        </div>
-
-        <div class="form-outline mb-4">
-          <select
-            name="test[]"
-            id="test"
-            multiple
-            multiselect-search="true"
-            multiselect-select-all="true"
-            multiselect-max-items="3"
-            multiselect-hide-x="false"
-            multiselect-placeholder="Click to select an option..."
-            style="width: 50%"
-          >
-            <option value="A" selected>A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D" selected>D</option>
-            <option value="E">E</option>
-            <option value="F">F</option>
-            <option value="G">G</option>
-          </select>
         </div>
 
         <!-- Submit button -->
@@ -68,7 +46,6 @@
       </form>
     </div>
 
-    <script src="../../assets/multiselect-dropdown/multiselect-dropdown.js"></script>
     <script>
       const electron = require("electron");
       const { ipcRenderer } = electron;
@@ -80,21 +57,21 @@
       const listLink = document.querySelector("#btn-list");
 
       listLink.addEventListener("click", function (event) {
-        ipcRenderer.send("semi:good:list:click", "clicked");
+        ipcRenderer.send("test:list:click", "clicked");
       });
 
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("semi:good:add:loaded", "loaded");
+          ipcRenderer.send("test:add:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("semi:good:add:fetched", function (e, data) {
-        const semiunit = document.querySelector("#semiunit");
+      ipcRenderer.on("test:add:fetched", function (e, data) {
+        const testUnit = document.querySelector("#testUnit");
         for (var k = 0; k < data.length; k++) {
-          semiunit.options.add(
+          testUnit.options.add(
             new Option(data[k].unit_details, data[k].unit_name)
           );
         }
@@ -103,28 +80,16 @@
       function submitForm(e) {
         e.preventDefault();
 
-        const seminame = document.querySelector("#seminame").value;
-        const semiunit = document.querySelector("#semiunit").value;
-        // const test = document.querySelector("#test").value;
-        var selected = [];
-        for (var option of document.getElementById("test").options) {
-          if (option.selected) {
-            selected.push(option.value);
-          }
-        }
-        // console.log(selected);
-        ipcRenderer.send("semi:good:add:submit", [
-          seminame,
-          semiunit,
-          selected,
-        ]);
+        const testName = document.querySelector("#testName").value;
+        const testUnit = document.querySelector("#testUnit").value;
+        ipcRenderer.send("test:add:submit", [testName, testUnit]);
 
-        ipcRenderer.on("semi:good:add:reply", function (e, reply) {
+        ipcRenderer.on("test:add:reply", function (e, reply) {
           if (reply == "success") {
             document.querySelector("#msg").style.visibility = "visible";
             document.querySelector("#msg").className = "alert alert-success";
 
-            document.querySelector("#seminame").value = "";
+            document.querySelector("#testName").value = "";
 
             document.querySelector("#msg").textContent = "Added Successfully!";
           } else {
