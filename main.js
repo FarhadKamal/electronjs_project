@@ -9,6 +9,7 @@ const { createPackageWindow } = require("./controller/package");
 const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
 const { createRawMatStockRcvWindow } = require("./controller/raw_material_rcv");
+// const { createGoodsPlaning } = require("./controller/goods_planing");
 const { createLoginWindow, changePasswordWindow } = require("./controller/login");
 
 // development or production
@@ -98,7 +99,15 @@ const mainMenuTemplate = [
         click() {
           createRawMatStockRcvWindow();
         },
-      },    
+      },   
+
+      {
+        label: "Goods Planing",
+
+        click() {
+          createGoodsPlaning();
+        },
+      },   
     ],
   },
 ];
@@ -188,7 +197,7 @@ const dummyMenuTemplate = [
 function checkSession() {
   let rtn = false;
   session.defaultSession.cookies
-    .get({ url: "http://myapp.com" })
+    .get({ url: "#" })
     .then((cookies) => {
       if (cookies.length > 0) rtn = true;
     })

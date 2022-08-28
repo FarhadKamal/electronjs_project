@@ -6,7 +6,8 @@ function getConnectionString(){
     'host'     : 'localhost',
     'user'     : 'root',
     'password' : null,
-    'database' : 'wood'} 
+    'database' : 'wood'
+  } 
 
     return conJSON
   }

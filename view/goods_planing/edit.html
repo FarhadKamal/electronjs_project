@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+
+    <title>Raw Material</title>
+  </head>
+  <body>
+    <div class="alert alert-dark" id="msg" role="alert"></div>
+
+    <div class="container">
+      <button
+        type="button"
+        id="btn-list"
+        class="btn btn-secondary btn-block mb-4"
+      >
+        back to list
+      </button>
+      <form>
+        <!-- Email input -->
+        <div class="form-outline mb-4">
+          <input type="hidden" id="mtid" class="form-control" />
+          <input
+            type="text"
+            id="mtname"
+            autofocus
+            class="form-control"
+            required
+          />
+
+          <label class="form-label">Raw Material Name</label>
+        </div>
+
+        <div class="form-outline mb-4">
+          <select id="mtunit" class="form-select">
+            <!-- empty -->
+          </select>
+          <label class="form-label">Unit</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">
+          Update
+        </button>
+      </form>
+    </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+      const form = document.querySelector("form");
+
+      form.addEventListener("submit", submitForm);
+
+      document.querySelector("#msg").style.visibility = "hidden";
+
+      const listLink = document.querySelector("#btn-list");
+
+      listLink.addEventListener("click", function (event) {
+        ipcRenderer.send("raw:material:list:click", "clicked");
+      });
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("raw:material:edit:loaded", "loaded");
+        },
+        false
+      );
+
+      ipcRenderer.on("raw:material:edit:fetched", function (e, data) {
+        document.querySelector("#mtid").value = data[0][0].raw_mat_id;
+        document.querySelector("#mtname").value = data[0][0].raw_mat_name;
+    
+
+        const mtunit = document.querySelector("#mtunit");
+        for (var k = 0; k < data[1].length; k++) {
+          mtunit.options.add(
+            new Option(data[1][k].unit_details, data[1][k].unit_name)
+          );
+        }
+        document.querySelector("#mtunit").value = data[0][0].raw_mat_unit;
+
+      });
+
+      function submitForm(e) {
+        e.preventDefault();
+        const mtname = document.querySelector("#mtname").value;
+        const mtunit = document.querySelector("#mtunit").value;
+        const mtid = document.querySelector("#mtid").value;
+        ipcRenderer.send("raw:material:edit:submit", [mtid,mtname, mtunit]);
+
+        ipcRenderer.on("raw:material:edit:reply", function (e, reply) {
+          if (reply == "success") {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-success"; 
+            document.querySelector("#msg").textContent = "Edited Successfully!";
+          } else {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-danger";
+            document.querySelector("#msg").textContent = reply;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
