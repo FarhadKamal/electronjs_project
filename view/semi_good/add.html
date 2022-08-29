@@ -17,7 +17,7 @@
         id="btn-list"
         class="btn btn-secondary btn-block mb-4"
       >
-        back to list
+        Back to list
       </button>
       <form>
         <!-- Email input -->
@@ -33,10 +33,25 @@
         </div>
 
         <div class="form-outline mb-4">
-          <select id="semiunit" class="form-select">
+          <select id="semiunit" class="form-control">
             <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
+        </div>
+
+        <div class="form-outline mb-4">
+          <div class="bd-example" data-example-id="">
+            <table class="table table-bordered" id="raw_materials_list">
+              <thead class="thead-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Raw Materials</th>
+                  <th>Qty</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Submit button -->
@@ -69,12 +84,15 @@
       );
 
       ipcRenderer.on("semi:good:add:fetched", function (e, data) {
-        const semiunit = document.querySelector("#semiunit");
-        for (var k = 0; k < data.length; k++) {
+        let semiunit = document.querySelector("#semiunit");
+        for (let k = 0; k < data[0].length; k++) {
           semiunit.options.add(
-            new Option(data[k].unit_details, data[k].unit_name)
+            new Option(data[0][k].unit_details, data[0][k].unit_name)
           );
         }
+
+        document.querySelector("#raw_materials_list > tbody").innerHTML =
+          data[1];
       });
 
       function submitForm(e) {
@@ -82,7 +100,35 @@
 
         const seminame = document.querySelector("#seminame").value;
         const semiunit = document.querySelector("#semiunit").value;
-        ipcRenderer.send("semi:good:add:submit", [seminame, semiunit]);
+
+        // const test = document.querySelector("#test").value;
+        let raw_material_id = [];
+        let raw_material_qty = [];
+
+        let raw_material_id_list =
+          document.querySelectorAll("#raw_materials_id");
+        let raw_material_qty_list =
+          document.querySelectorAll("#raw_materials_qty");
+
+        for (let i = 0; i < raw_material_id_list.length; i++) {
+          let e = raw_material_id_list[i];
+          raw_material_id.push(e.value);
+        }
+
+        for (i = 0; i < raw_material_qty_list.length; i++) {
+          var e = raw_material_qty_list[i];
+          raw_material_qty.push(e.value);
+        }
+
+        // console.log(raw_material_id);
+        // console.log(raw_material_qty);
+
+        ipcRenderer.send("semi:good:add:submit", [
+          seminame,
+          semiunit,
+          raw_material_id,
+          raw_material_qty,
+        ]);
 
         ipcRenderer.on("semi:good:add:reply", function (e, reply) {
           if (reply == "success") {

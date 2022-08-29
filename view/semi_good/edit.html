@@ -35,10 +35,25 @@
         </div>
 
         <div class="form-outline mb-4">
-          <select id="semiunit" class="form-select">
+          <select id="semiunit" class="form-control">
             <!-- empty -->
           </select>
           <label class="form-label">Unit</label>
+        </div>
+
+        <div class="form-outline mb-4">
+          <div class="bd-example" data-example-id="">
+            <table class="table table-bordered" id="raw_materials_list">
+              <thead class="thead-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Raw Materials</th>
+                  <th>Qty</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Submit button -->
@@ -74,7 +89,7 @@
       ipcRenderer.on("semi:good:edit:fetched", function (e, data) {
         document.querySelector("#semiid").value = data[0][0].semi_good_id;
         document.querySelector("#seminame").value = data[0][0].semi_good_name;
-
+        console.log(data);
         const semiunit = document.querySelector("#semiunit");
         for (var k = 0; k < data[1].length; k++) {
           semiunit.options.add(
@@ -82,6 +97,9 @@
           );
         }
         document.querySelector("#semiunit").value = data[0][0].semi_good_unit;
+
+        document.querySelector("#raw_materials_list > tbody").innerHTML =
+          data[2];
       });
 
       function submitForm(e) {
@@ -89,7 +107,32 @@
         const seminame = document.querySelector("#seminame").value;
         const semiunit = document.querySelector("#semiunit").value;
         const semiid = document.querySelector("#semiid").value;
-        ipcRenderer.send("semi:good:edit:submit", [semiid, seminame, semiunit]);
+
+        let raw_material_id = [];
+        let raw_material_qty = [];
+
+        let raw_material_id_list =
+          document.querySelectorAll("#raw_materials_id");
+        let raw_material_qty_list =
+          document.querySelectorAll("#raw_materials_qty");
+
+        for (let i = 0; i < raw_material_id_list.length; i++) {
+          let e = raw_material_id_list[i];
+          raw_material_id.push(e.value);
+        }
+
+        for (i = 0; i < raw_material_qty_list.length; i++) {
+          var e = raw_material_qty_list[i];
+          raw_material_qty.push(e.value);
+        }
+
+        ipcRenderer.send("semi:good:edit:submit", [
+          semiid,
+          seminame,
+          semiunit,
+          raw_material_id,
+          raw_material_qty,
+        ]);
 
         ipcRenderer.on("semi:good:edit:reply", function (e, reply) {
           if (reply == "success") {
