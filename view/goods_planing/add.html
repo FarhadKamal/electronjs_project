@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" href="../../css/bootstrap.min.css" />
 
-    <title>Raw Material</title>
+    <title>Add a New Planning</title>
   </head>
   <body>
     <div class="alert alert-dark" id="msg" role="alert"></div>
@@ -17,26 +17,58 @@
         id="btn-list"
         class="btn btn-secondary btn-block mb-4"
       >
-        back to list
+        Back to list
       </button>
       <form>
-        <!-- Email input -->
+        
         <div class="form-outline mb-4">
           <input
-            type="text"
-            id="mtname"
+            type="date"
+            id="planningDate"
             autofocus
             class="form-control"
             required
           />
-          <label class="form-label">Raw Material Name</label>
+          <label class="form-label">Planing Date</label>
         </div>
 
         <div class="form-outline mb-4">
-          <select id="mtunit" class="form-select">
+          <select id="planningFinishedGood" class="form-control">
             <!-- empty -->
           </select>
-          <label class="form-label">Unit</label>
+          <label class="form-label">Finished Good</label>
+        </div>
+
+        
+        <div class="form-outline mb-4">
+          <input
+            type="number"
+            id="planningFinishedGoodQty"
+            autofocus
+            class="form-control"
+            required
+          />
+          <label class="form-label">Finished Good Qty</label>
+        </div>
+        
+        <div class="form-outline mb-4">
+          <input
+            type="date"
+            id="planningStartDate"
+            autofocus
+            class="form-control"
+            required
+          />
+          <label class="form-label">Start Date</label>
+        </div>
+        
+        
+
+        <div class="form-outline mb-4">
+          <select id="planningSemiGoods" class="form-control">
+            <!-- empty -->
+          </select>
+          <label class="form-label">Semi Goods</label>
         </div>
 
         <!-- Submit button -->

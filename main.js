@@ -2,13 +2,30 @@
 const { app, BrowserWindow, ipcMain, Menu, session } = require("electron");
 const path = require("path");
 
+
+// Settings Menu 
 const { createRawMaterialWindow } = require("./controller/raw_material");
 const { createSemiGoodWindow } = require("./controller/semi_good");
 const { createFinishedGoodWindow } = require("./controller/finished_good");
 const { createPackageWindow } = require("./controller/package");
 const { createUnitWindow } = require("./controller/unit");
 const { get_user_details } = require("./controller/user");
-const { createRawMatStockRcvWindow } = require("./controller/raw_material_rcv");
+// ./Settings Menu
+
+
+
+// Process Menu
+const { createRawMatStockRcvWindow } = require("./controller/process");
+const { createPackageRcvWindow } = require("./controller/process");
+// ./Process Menu
+
+
+
+// Goods Planning
+const { createGoodsPlaning } = require("./controller/goods_planning");
+// ./Goods Planning
+
+
 const { createLoginWindow, changePasswordWindow } = require("./controller/login");
 
 // development or production
@@ -89,7 +106,7 @@ const mainMenuTemplate = [
   },
 
   {
-    label: "Receive",
+    label: "Process",
     submenu: [
 
       {
@@ -97,6 +114,26 @@ const mainMenuTemplate = [
 
         click() {
           createRawMatStockRcvWindow();
+        },
+      },   
+      {
+        label: "Receive Package",
+
+        click() {
+          createPackageRcvWindow();
+        },
+      },   
+    ],
+  },
+  {
+    label: "Planning",
+    submenu: [
+
+      {
+        label: "Goods Planning",
+
+        click() {
+          createGoodsPlaning();
         },
       },    
     ],

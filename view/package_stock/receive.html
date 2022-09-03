@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" />
+
+    <title>Receive Package</title>
+  </head>
+  <body>
+    <div class="alert alert-dark" id="msg" role="alert"></div>
+
+    <div class="container">
+      <form>
+        <!-- Email input -->
+        <div class="form-outline mb-4">
+          <select id="pckgname" required class="form-control">
+            <!-- empty -->
+          </select>
+          <label class="control-label">Package</label>
+        </div>
+
+        <div class="form-outline mb-4">
+          <input type="number" id="pckgqty" class="form-control" required />
+          <label class="control-label">Qty</label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4">
+          add to Stock
+        </button>
+      </form>
+    </div>
+
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+      const form = document.querySelector("form");
+      form.addEventListener("submit", submitForm);
+
+      document.querySelector("#msg").style.visibility = "hidden";
+
+      document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+          ipcRenderer.send("package:rcv:loaded", "loaded");
+        },
+        false
+      );
+
+      ipcRenderer.on("package:rcv:fetched", function (e, data) {
+        const pckgname = document.querySelector("#pckgname");
+
+        for (var k = 0; k < data.length; k++) {
+          pckgname.options.add(
+            new Option(data[k].package_name, data[k].package_id)
+          );
+        }
+      });
+
+      function submitForm(e) {
+        e.preventDefault();
+
+        const pckgname = document.querySelector("#pckgname").value;
+        const pckgqty = document.querySelector("#pckgqty").value;
+
+        ipcRenderer.send("package:rcv:submit", [pckgname, pckgqty]);
+
+        ipcRenderer.on("package:rcv:reply", function (e, reply) {
+          if (reply == "success") {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-success";
+
+            document.querySelector("#pckgname").value = "";
+            document.querySelector("#pckgqty").value = "";
+            document.querySelector("#msg").textContent =
+              "Stock Added Successfully!";
+          } else {
+            document.querySelector("#msg").style.visibility = "visible";
+            document.querySelector("#msg").className = "alert alert-danger";
+            document.querySelector("#msg").textContent = reply;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

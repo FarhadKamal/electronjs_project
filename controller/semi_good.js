@@ -49,9 +49,9 @@ ipcMain.on("semi:good:edit:request", function (e, id) {
     trackData = row;
     raw_material_table = "";
     // Raw Material List
-    get_raw_material_list_by_id(id, function (row2) {
+    get_raw_material_list_by_id(id, function (rows_raw_material) {
       let sl = 1;
-      row2.forEach(function (raw_material) {
+      rows_raw_material.forEach(function (raw_material) {
         raw_material_table += "<tr>";
         raw_material_table += "<td>";
         raw_material_table += sl;
@@ -308,15 +308,13 @@ function update(item, callback) {
     let raw_material_qty = item[4];
     let semi_item_id = item[0];
     // deleting all previous component of semi goods.
-    //delete_semi_goods_componenet(semi_item_id);
 
-    delete_semi_goods_componenet(semi_item_id, function (res) {
-      if (res == "deleted")
-        insert_semi_goods_component_after_update(
-          raw_material_id,
-          raw_material_qty,
-          semi_item_id
-        );
+    delete_semi_goods_componenet(semi_item_id, function (reply) {
+      insert_semi_goods_component_after_update(
+        raw_material_id,
+        raw_material_qty,
+        semi_item_id
+      );
     });
 
     // Inserting New Components After Deleting The Previous One
@@ -327,7 +325,9 @@ function update(item, callback) {
 }
 
 function deleteQuery(id, callback) {
-  delete_semi_goods_componenet(id, function (res) {
+  // Deleting All Semi Goods Component
+
+  delete_semi_goods_componenet(id, function (reply) {
     const connection = mysql.createConnection(getConnectionString());
 
     // connect to mysql
@@ -560,7 +560,9 @@ function delete_semi_goods_componenet(id, callback) {
       console.log(err);
       callback(err);
       return;
-    } else callback("deleted");
+    } else {
+      callback("deleted");
+    }
   });
 
   // Close the connection

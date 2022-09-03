@@ -48,28 +48,28 @@
       const addLink = document.querySelector("#btn-add");
 
       addLink.addEventListener("click", function (event) {
-        ipcRenderer.send("raw:material:add:click", "clicked");
+        ipcRenderer.send("goods:planning:add:click", "clicked");
       });
 
       document.addEventListener(
         "DOMContentLoaded",
         function () {
-          ipcRenderer.send("raw:material:list:loaded", "loaded");
+          ipcRenderer.send("goods:planning:list:loaded", "loaded");
         },
         false
       );
 
-      ipcRenderer.on("raw:material:list:table", function (e, item) {
+      ipcRenderer.on("goods:planning:list:table", function (e, item) {
         document.querySelector("#mat-tab > tbody").innerHTML = item;
       });
 
       function deleteMe(id) {
-        ipcRenderer.send("raw:material:delete:request", id);
+        ipcRenderer.send("goods:planning:delete:request", id);
       }
       function editMe(id) {
-        ipcRenderer.send("raw:material:edit:request", id);
+        ipcRenderer.send("goods:planning:edit:request", id);
       }
-      ipcRenderer.on("raw:material:list:deleted", function (e, reply) {
+      ipcRenderer.on("goods:planning:list:deleted", function (e, reply) {
         document.querySelector("#msg").style.visibility = "visible";
         document.querySelector("#msg").className = "alert alert-danger";
         document.querySelector("#msg").textContent = reply;
